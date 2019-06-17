@@ -1,0 +1,13 @@
+
+order deny,allow
+deny from all
+
+# whitelist home IP address
+allow from xxx.xxx.xxx.xxx
+
+# whitelist server IP's
+allow from xxx.xxx.xxx.xxx
+
+
+# your own IP address
+allow from xxx.xxx.xxx.xxx
