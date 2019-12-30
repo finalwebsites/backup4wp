@@ -30,15 +30,19 @@ if (!empty($_POST['backupid'])) {
 
 		if ($result->database == 1) {
 			$conn = get_db_conn_vals(ABSPATH);
-			if (isset($conn['DB_NAME'], $conn['DB_USER'], $conn['DB_PASSWORD'])) {
+			if (isset($conn['DB_NAME'], $conn['DB_USER'], $conn['DB_PASSWORD'], $conn['DB_HOST'])) {
 				$sqlpath = MYBACKUPDIR.'files/'.$result->dirname.'/database.sql';
-				$mysql = sprintf('MYSQL_PWD=\'%s\' mysql --user=%s %s < %s 2>&1', $conn['DB_PASSWORD'], $conn['DB_USER'], $conn['DB_NAME'], $sqlpath);
+				/*$mysql = sprintf('MYSQL_PWD=\'%s\' mysql --user=%s %s < %s 2>&1', $conn['DB_PASSWORD'], $conn['DB_USER'], $conn['DB_NAME'], $sqlpath);
 				$dbiresp = shell_exec($mysql);
 				if ($dbiresp == '' || substr($dbiresp, 0, 7) == 'Warning') {
 					if (file_exists(ABSPATH.'database.sql')) unlink(ABSPATH.'database.sql');
 				} else {
 					if (file_exists(ABSPATH.'database.sql')) unlink(ABSPATH.'database.sql');
 					die('DB error: '.$dbiresp);
+				}*/
+				$response = restore_database($conn['DB_HOST'], $conn['DB_USER'], $conn['DB_PASSWORD'], $conn['DB_NAME'], $sqlpath);
+				if (false ==  filter_var($response, FILTER_VALIDATE_BOOLEAN)) {
+					die($response);
 				}
 			}
 		}

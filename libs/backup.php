@@ -1,5 +1,6 @@
 <?php
 include_once 'func.php';
+include_once 'Mysqldump.php';
 
 /** TODO **/
 // Exlcude hidden files (maybe make the sql dump hidden too?)
@@ -34,7 +35,10 @@ if (isset($_POST['Submitform'])) {
 
 		if (isset($conn['DB_NAME'], $conn['DB_USER'], $conn['DB_PASSWORD'])) {
 			$database = 1;
-			exec(sprintf('mysqldump --user=%s --password=%s %s --result-file=%sfiles/%s/database.sql', $conn['DB_USER'], $conn['DB_PASSWORD'], $conn['DB_NAME'], MYBACKUPDIR, $dirname));
+			//exec(sprintf('mysqldump --user=%s --password=%s %s --result-file=%sfiles/%s/database.sql', $conn['DB_USER'], $conn['DB_PASSWORD'], $conn['DB_NAME'], MYBACKUPDIR, $dirname));
+
+			$dump = new Ifsnop\Mysqldump\Mysqldump('mysql:host='.$conn['DB_HOST'].';dbname='.$conn['DB_NAME'], $conn['DB_USER'], $conn['DB_PASSWORD'], array('add-drop-table' => true));
+			$dump->start(MYBACKUPDIR.'files/'.$dirname.'/database.sql');
 		}
 	}
 	$sync = sprintf('rsync -av --exclude mybackup%s %s %s', $excl_str, $backup_src, $backup_targ);
@@ -56,14 +60,5 @@ if (isset($_POST['Submitform'])) {
 	} catch(PDOException $e) {
 		print 'Exception : '.$e->getMessage();
 	}
-
-	//$zip = sprintf('zip -r %sfiles/%s.zip %s -x \*mybackup\* \*wp-content/cache\* \*wp-content/uploads\*', MYBACKUPDIR, $name, ABSPATH);
-	//$unzip = sprintf('unzip %sfiles/%s.zip %s\* %s/test', MYBACKUPDIR, $name, ABSPATH, dirname(ABSPATH));
-
-
-	//$zip = sprintf('cd ../ && zip -ru %sfiles/%s.zip tmp', MYBACKUPDIR, $name);
-
-	//exec($zip);
 	echo 'okay';
 }
-

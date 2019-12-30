@@ -7,26 +7,11 @@ include_once 'libs/func.php';
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
     <title>Backup &amp; Restore for WordPress</title>
-
-    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-
-    <!-- Custom styles for this template -->
     <link href="mbr.css" rel="stylesheet">
-
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
   </head>
-
   <body>
-
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container outwrapper">
         <div class="navbar-header">
@@ -48,12 +33,25 @@ include_once 'libs/func.php';
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-
     <div class="container outwrapper">
-
       <div class="starter-template">
         <h1>Backup &amp; Restore for WordPress <small>beta</small></h1>
         <p class="lead">Create backups from your WordPress website and restore files if necessary.</p>
+        <?php
+        $required = true;
+        if (function_exists('exec')) {
+            if ('' == exec('rsync --version ')) {
+                echo '
+                <p class="text-warning">The required Linux tool "rsync" is not available.</p>';
+                $required = false;
+            }
+        } else {
+            echo '
+                <p class="text-warning">The required PHP function "exec()" is not enabled.</p>';
+                $required = false;
+        }
+        if ($required) {
+        ?>
         <form role="form" id="myform">
 			<input type="hidden" name="Submitform" value="1">
 			<p>Check which directories you like to exclude from the backup. The "mybackup" directory is always excluded!</p>
@@ -86,6 +84,8 @@ include_once 'libs/func.php';
             <button type="button" class="btn btn-default submitbtn" value="full">Full backup (incl. WP Core)</button>
             <button type="button" class="btn btn-primary submitbtn" value="part">Part. backup (wp-content dir)</button>
         </form>
+        <?php } // end if $required ?>
+
 		<div id="msg" class="" role="alert"></div>
 		<table class="table table-striped filelist">
 			<thead>
@@ -138,16 +138,11 @@ include_once 'libs/func.php';
       </div>
 
     </div><!-- /.container -->
-
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 	<script>
 
-	$(document).ready(function() {
+	jQuery(document).ready(function($) {
 
 		$('.submitbtn').click(function(e) {
 			$('#msg').removeClass('alert alert-success').html('');
@@ -163,11 +158,9 @@ include_once 'libs/func.php';
 					btn.text(btntext);
 					if (data == 'okay') {
 						$('#msg').addClass('alert alert-success').html('The WordPress backup was succesfully, <a href="index.php">click here</a> to refresh the backup list.');
-						setTimeout(function (){
-							//window.location.reload(true);
-						}, 2000);
+                        setTimeout(location.reload.bind(location), 5000);
 					} else {
-
+                        $('#msg').addClass('alert alert-danger').html(data);
 					}
                 }
 			});
@@ -184,11 +177,9 @@ include_once 'libs/func.php';
                 success: function (data) {
 					if (data == 'okay') {
 						$('#msg').addClass('alert alert-success').html('The WordPress backup is removed, <a href="index.php">click here</a> to refresh the backup list.');
-						setTimeout(function (){
-							//window.location.reload(true);
-						}, 2000);
+						setTimeout(location.reload.bind(location), 5000);
 					} else {
-
+                        //
 					}
                 }
 			});
@@ -205,9 +196,7 @@ include_once 'libs/func.php';
                 success: function (data) {
 					if (data == 'okay') {
 						$('#msg').addClass('alert alert-success').html('The WordPress backup is succesfully restored.');
-						setTimeout(function (){
-							//window.location.reload(true);
-						}, 5000);
+						setTimeout(location.reload.bind(location), 5000);
 					} else {
 						$('#msg').addClass('alert alert-danger').html(data);
 					}

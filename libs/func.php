@@ -8,14 +8,13 @@ function get_db_conn_vals($dir) {
 			while (! feof($fc)) {
 				$line = fgets($fc);
 				if ( preg_match('/^\s*define\s*\(\s*[\'"]DB_NAME[\'"]\s*,\s*[\'"](.+?)[\'"]/', $line, $match) ) {
-
 					$conn['DB_NAME'] = $match[1];
 				} elseif ( preg_match('/^\s*define\s*\(\s*[\'"]DB_USER[\'"]\s*,\s*[\'"](.+?)[\'"]/', $line, $match) ) {
-
 					$conn['DB_USER'] = $match[1];
 				} elseif ( preg_match('/^\s*define\s*\(\s*[\'"]DB_PASSWORD[\'"]\s*,\s*([\'"])(.+?)\1/', $line, $match) ) {
-
 					$conn['DB_PASSWORD'] = $match[2];
+				} elseif ( preg_match('/^\s*define\s*\(\s*[\'"]DB_HOST[\'"]\s*,\s*[\'"](.+?)[\'"]/', $line, $match) ) {
+					$conn['DB_HOST'] = $match[1];
 				}
 			}
 			fclose($fc);
@@ -24,6 +23,28 @@ function get_db_conn_vals($dir) {
 	return $conn;
 }
 
+function restore_database($host, $username, $password, $dbname, $sql_path){
+    $db = new mysqli($host, $username, $password, $dbname);
+    $templine = '';
+    $lines = file($sql_path);
+    $error = '';
+    foreach ($lines as $line){
+        // Continue it if it's a comment empty row
+        if(substr($line, 0, 2) == '--' || $line == ''){
+            continue;
+        }
+        $templine .= $line;
+        // If it has a semicolon at the end, it's the end of the query
+        if (substr(trim($line), -1, 1) == ';'){
+            if(!$db->query($templine)){
+                $error .= 'Error performing "<b>' . $templine . '</b>": ' . $db->error . '<br />';
+            }
+            $templine = '';
+        }
+    }
+	$db->close();
+    return ($error != '') ? $error : true;
+}
 
 // Credits to Arseny Mogilev who posted this function to the PHP manual
 function filesizeConvert($bytes) {
