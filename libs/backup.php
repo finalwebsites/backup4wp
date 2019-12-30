@@ -43,7 +43,7 @@ if (isset($_POST['Submitform'])) {
 	try {
 		//open the database
 		$db = new PDO('sqlite:../data/wpbackupsDb_PDO.sqlite');
-		$insert = "INSERT INTO wpbackups (dirname, dirsize, insertdate, excludedata, backuptype, database) VALUES (:dirname, :dirsize, :insertdate, :excludedata, :backuptype, :database)";
+		$insert = "INSERT INTO wpbackups (dirname, dirsize, insertdate, excludedata, backuptype, database, description) VALUES (:dirname, :dirsize, :insertdate, :excludedata, :backuptype, :database, :description)";
 		$stmt = $db->prepare($insert);
 		$stmt->bindValue(':dirname', $dirname, SQLITE3_TEXT);
 		$stmt->bindValue(':dirsize', $dirsize, SQLITE3_INTEGER);
@@ -51,6 +51,7 @@ if (isset($_POST['Submitform'])) {
 		$stmt->bindValue(':excludedata', serialize($_POST['exclude']), SQLITE3_TEXT);
 		$stmt->bindValue(':backuptype', $_POST['typebackup'], SQLITE3_TEXT);
 		$stmt->bindValue(':database', $database, SQLITE3_INTEGER);
+		$stmt->bindValue(':description', $_POST['description'], SQLITE3_TEXT);
 		$stmt->execute();
 	} catch(PDOException $e) {
 		print 'Exception : '.$e->getMessage();

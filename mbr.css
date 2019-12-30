@@ -9,3 +9,4 @@ body {
 #myform { margin-bottom:20px; }
 table.filelist { margin-top:40px;text-align:left; }
 table.filelist tbody tr td em { font-size:0.8em;color:#7F7F7F; }
+input.descr { max-width:640px;margin:auto;}

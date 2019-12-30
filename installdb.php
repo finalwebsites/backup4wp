@@ -4,7 +4,7 @@ try {
     $db = new PDO('sqlite:data/wpbackupsDb_PDO.sqlite');
 
     //create the database table
-    $db->exec("CREATE TABLE wpbackups ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'dirname' TEXT, 'dirsize' INTEGER, 'insertdate' INTEGER)");
+    $db->exec("CREATE TABLE wpbackups ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'dirname' TEXT, 'dirsize' INTEGER, 'insertdate' INTEGER, 'excludedata' TEXT, 'backuptype' TEXT, 'database' INTEGER, 'description' TEXT)");
     // close the database connection
     $db = NULL;
 }

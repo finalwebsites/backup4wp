@@ -79,6 +79,10 @@ include_once 'libs/func.php';
 				excl. Database
 			  </label>
 			</div>
+			<div class="form-group">
+				<label>Backup description</label>
+				<input type="text" class="form-control descr" name="description" placeholder="Optional...">
+			</div>
             <button type="button" class="btn btn-default submitbtn" value="full">Full backup (incl. WP Core)</button>
             <button type="button" class="btn btn-primary submitbtn" value="part">Part. backup (wp-content dir)</button>
         </form>
@@ -116,7 +120,7 @@ include_once 'libs/func.php';
 					$tablehtml .= '
 					<tr id="'.$res['id'].'">
 					  <th scope="row">'.$i.'</th>
-					  <td>'.$res['dirname'].'<br><em>'.$details.'</em></td>
+					  <td>'.$res['dirname'].'<br><em>'.$details.'</em><br><em><strong>'.$res['description'].'</strong></em></td>
 					  <td>'.filesizeConvert($res['dirsize']).'</td>
 					  <td>'.date('d-m-Y H:i:s', $res['insertdate']).'</td>
 					  <td><a href="javascript:void(0);" class="btn btn-warning btn-xs restore">Restore</a></td>
