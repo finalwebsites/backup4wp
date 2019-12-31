@@ -49,7 +49,7 @@ include_once 'libs/func.php';
             <label class="sr-only" for="password">Password</label>
             <input type="password" class="form-control" id="password" placeholder="Password">
           </div>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-primary" id="savepasswd">Save</button>
         </form>
         <hr>
         <p><a href="javascript:void(0);" id="addipadr"><strong>Allow the current IP address</strong></a> (<?php echo $_SERVER['REMOTE_ADDR']; ?>) to access the directory.</p>
@@ -65,6 +65,31 @@ include_once 'libs/func.php';
 	<script>
 
 	jQuery(document).ready(function($) {
+
+        $('#savepasswd').click(function(e) {
+			$('#msg').removeClass('alert alert-success').html('');
+			var login = $('#loginname').val();
+			var pwd = $('#password').val();
+            if (!loginname || !password) {
+                $('#msg').html('At least one of the form fields is empty.');
+                return false;
+            } else {
+    			$.ajax({
+    				url: "libs/password_protect.php",
+                    type: 'POST',
+                    data: { loginname: login, password: pwd },
+                    success: function (data) {
+    					if (data == 'okay') {
+    						$('#msg').addClass('alert alert-success').html('Your login and password are saved to protect the directory. You need to login first to access the page.');
+    					} else {
+                            $('#msg').addClass('alert alert-danger').html('Error, login and password are not saved.');
+    					}
+                    }
+    			});
+            }
+			e.preventDefault();
+		});
+
         $('#addipadr').click(function(e) {
 			$('#msg').removeClass('alert alert-success').html('<img src="img/loadingAnimation.gif" alt="Please wait...">');
 			$.ajax({
