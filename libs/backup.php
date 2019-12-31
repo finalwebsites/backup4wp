@@ -5,10 +5,6 @@ include_once 'Mysqldump.php';
 /** TODO **/
 // Exlcude hidden files (maybe make the sql dump hidden too?)
 
-define('MYBACKUPDIR', dirname(dirname(__FILE__)).'/');
-define('ABSPATH', dirname(MYBACKUPDIR).'/');
-$secret = 'f8dhfjdf7';
-
 if (isset($_POST['Submitform'])) {
 	$dirname = md5($secret.time());
 	$partbackup = false;

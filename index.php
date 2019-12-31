@@ -25,10 +25,10 @@ include_once 'libs/func.php';
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="index.php">Backup &amp; Restore</a></li>
+            <li class="active"><a href="/index.php">Backup &amp; Restore</a></li>
             <li><a href="/">Home</a></li>
             <li><a href="../wp-admin/">WP Admin</a></li>
-            <li><a href="data/phpliteadmin.php" target="_blank">phpLiteAdmin</a></li>
+            <li><a href="settings.php" target="_blank">Settings></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -204,11 +204,12 @@ include_once 'libs/func.php';
 			});
 			e.preventDefault();
 		});
-
+        /*
 		$('.download').click(function(e) {
 			alert('Not available, maybe in the next release.');
 			e.preventDefault();
 		});
+        */
 	});
 
     </script>

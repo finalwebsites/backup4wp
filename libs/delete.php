@@ -1,8 +1,6 @@
 <?php
 include_once 'func.php';
 
-define('MYBACKUPDIR', dirname(dirname(__FILE__)).'/');
-
 if (!empty($_POST['delid'])) {
 	$db = new PDO('sqlite:../data/wpbackupsDb_PDO.sqlite');
 	$sth = $db->prepare("SELECT dirname FROM wpbackups WHERE id = :id");

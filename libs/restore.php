@@ -1,10 +1,7 @@
 <?php
 include_once 'func.php';
 
-// TODO: exclude sql file for file restore
-
-define('MYBACKUPDIR', dirname(dirname(__FILE__)).'/');
-define('ABSPATH', dirname(MYBACKUPDIR).'/');
+// TODO: exclude sql file for file restore ?
 
 if (!empty($_POST['backupid'])) {
 	try {
