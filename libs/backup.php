@@ -1,7 +1,7 @@
 <?php
 include_once 'func.php';
 include_once 'Mysqldump.php';
-
+$secret = 'f8dhfjdf7'; // This as env var and dynamic?
 /** TODO **/
 // Exlcude hidden files (maybe make the sql dump hidden too?)
 

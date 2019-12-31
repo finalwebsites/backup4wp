@@ -25,10 +25,10 @@ include_once 'libs/func.php';
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="index.php">Backup &amp; Restore</a></li>
+            <li><a href="index.php">Backup &amp; Restore</a></li>
             <li><a href="/">Home</a></li>
             <li><a href="../wp-admin/">WP Admin</a></li>
-             <li><a href="settings.php" target="_blank">Settings></a></li>
+             <li class="active"><a href="settings.php">Settings</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -38,8 +38,9 @@ include_once 'libs/func.php';
         <h1>Backup &amp; Restore for WordPress <small>beta</small></h1>
         <h2>Settings page</h2>
         <h3>Protect the <em><?php echo basename(__DIR__); ?></em> directory.</h3>
-        <p>This function works only for Apache based web servers!</p>
+        <p>You can use onlt one of both options. The new method will replace the old one.<br>This function works only for web servers based on Apache!</p>
         <p>Add a login and password. If you safe a new password, the old one will be replaced (if exists).</p>
+        <div id="msg" class="" role="alert"></div>
         <form class="form-inline">
           <div class="form-group">
             <label class="sr-only" for="loginname">Login name</label>
@@ -52,10 +53,11 @@ include_once 'libs/func.php';
           <button type="button" class="btn btn-primary" id="savepasswd">Save</button>
         </form>
         <hr>
-        <p><a href="javascript:void(0);" id="addipadr"><strong>Allow the current IP address</strong></a> (<?php echo $_SERVER['REMOTE_ADDR']; ?>) to access the directory.</p>
+        <p><a href="javascript:void(0);" id="addipadr"><strong>Allow the current IP address</strong></a> (<?php echo $_SERVER['REMOTE_ADDR']; ?>) to access the directory.<br>If you created a login before, this action will remove the old files!</p>
+        <hr>
+        <p><a href="data/phpliteadmin.php" target="_blank">Access phpLiteAdmin</a></p>
 
 
-		<div id="msg" class="" role="alert"></div>
 
       </div>
 

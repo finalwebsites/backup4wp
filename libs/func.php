@@ -3,7 +3,7 @@
 define('MYBACKUPDIR', dirname(dirname(__FILE__)).'/');
 define('ABSPATH', dirname(MYBACKUPDIR).'/');
 
-$secret = 'f8dhfjdf7';
+
 
 function get_db_conn_vals($dir) {
 	$wp_config = $dir.'wp-config.php';

@@ -28,7 +28,7 @@ include_once 'libs/func.php';
             <li class="active"><a href="/index.php">Backup &amp; Restore</a></li>
             <li><a href="/">Home</a></li>
             <li><a href="../wp-admin/">WP Admin</a></li>
-             <li><a href="settings.php" target="_blank">Settings></a></li>
+             <li><a href="settings.php">Settings</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
