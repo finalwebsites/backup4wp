@@ -1,9 +1,5 @@
 # Backup & Restore for WordPress
 
-Create backups from your WordPress website and restore files if necessary.
-
-## Description
-
 You know the problem, you've created a website backup using a WordPress backup plugin and you can't do the the restore via the WP dashboard because your website is broken. Using this backup tool you're able to create a backup outside WordPress and access the tool again if you need to restore the website. We use the tool to create backups if we install a new theme / plugin or before we do some updates.
 
 ### How does it work?
@@ -14,7 +10,7 @@ The backup tool makes a copy from you WordPress website and stores the files in 
 This tool is using the Linux command line tool "rsync" to copy all the files. We're using the tool for years and it works perfect on all our web servers. It might break your site during the restore, so test it first on a test site.
 
 ### Security
-The tool doesn't store any database logins and all files are stored in a directory with a hashed name. If you protect the "mybackup" directory, your files should be pretty safe. 
+The tool doesn't store any database logins and all files are stored in a directory with a hashed name. If you protect the "mybackup" directory, your files should be pretty safe.
 
 ## Features
 * Super fast, a backup from a 500MB website takes only seconds!
