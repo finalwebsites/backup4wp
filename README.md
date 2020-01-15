@@ -23,7 +23,7 @@ The tool doesn't store any database logins and all files are stored in a directo
 
 ## Installation
 
-Download the files as a zip or via the GIT tools on your server. Place/upload the files into a directory named "mybackup" and place it into the website's public folder.
+Download the files as a zip or via the GIT tools on your server. Place/upload the files into a directory named "mybackup" and place it into the website's public folder. Use the settings page to protect the "mybackup" directory (works for Apache only). To protect other kind of web servers, please contact your system administrator.
 
 ### Installation snippet for ManageWP users
 
