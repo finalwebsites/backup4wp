@@ -38,6 +38,21 @@ include_once 'libs/func.php';
         <h1>Backup &amp; Restore for WordPress <small>beta</small></h1>
         <h2>Settings page</h2>
         <h3>Protect the <em><?php echo basename(__DIR__); ?></em> directory.</h3>
+        <?php
+        if (!function_exists( 'apache_get_version' )) {
+			echo '
+		<p>It looks like you\'re not using Apache. That\'s why the standard directory protection functions doesn\'t work for you.</p>
+		<p>For Nginx based servers the following snippet might work to restrict the directory for IP adresses.</p>
+		<pre class="smaller">
+location /mybackup {
+	# add your IP address below
+	allow xxx.xxx.xxx.xxx;
+	deny all;
+}
+		</pre>
+		<p>Ask you hosting provider if you have no idea where to place this code snippet!</p>';
+		} else {
+			echo '
         <p>You can use onlt one of both options. The new method will replace the old one.<br>This function works only for web servers based on Apache!</p>
         <p>Add a login and password. If you safe a new password, the old one will be replaced (if exists).</p>
         <div id="msg" class="" role="alert"></div>
@@ -53,11 +68,11 @@ include_once 'libs/func.php';
           <button type="button" class="btn btn-primary" id="savepasswd">Save</button>
         </form>
         <hr>
-        <p><a href="javascript:void(0);" id="addipadr"><strong>Allow the current IP address</strong></a> (<?php echo $_SERVER['REMOTE_ADDR']; ?>) to access the directory.<br>If you created a login before, this action will remove the old files!</p>
+        <p><a href="javascript:void(0);" id="addipadr"><strong>Allow the current IP address</strong></a> ('.$_SERVER['REMOTE_ADDR'].') to access the directory.<br>If you created a login before, this action will remove the old files!</p>
         <hr>
-        <p><a href="data/phpliteadmin.php" target="_blank">Access phpLiteAdmin</a></p>
-
-
+        <p><a href="data/phpliteadmin.php" target="_blank">Access phpLiteAdmin</a></p>';
+		}
+		?>
 
       </div>
 
