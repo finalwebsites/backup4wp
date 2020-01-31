@@ -39,7 +39,7 @@ include_once 'libs/func.php';
         <h2>Settings page</h2>
         <h3>Protect the <em><?php echo basename(__DIR__); ?></em> directory.</h3>
         <?php
-        if (!function_exists( 'apache_get_version' )) {
+        if (substr(strtolower($_SERVER['SERVER_SOFTWARE']), 0, 6) != 'apache' ) {
 			echo '
 		<p>It looks like you\'re not using Apache. That\'s why the standard directory protection functions doesn\'t work for you.</p>
 		<p>For Nginx based servers the following snippet might work to restrict the directory for IP adresses.</p>
