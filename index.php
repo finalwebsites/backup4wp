@@ -1,5 +1,13 @@
 <?php
 include_once 'libs/func.php';
+get_authorized();
+$msg = '';
+$alert_css = '';
+if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
+	$alert_css = 'alert alert-success';
+	$msg = 'Your email address is confirmed and valid.';
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,30 +36,15 @@ include_once 'libs/func.php';
             <li class="active"><a href="index.php">Backup &amp; Restore</a></li>
             <li><a href="/">Home</a></li>
             <li><a href="../wp-admin/">WP Admin</a></li>
-             <li><a href="settings.php">Settings</a></li>
+             <li><a href="options.php">Options</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
     <div class="container outwrapper">
       <div class="starter-template">
-        <h1>Backup &amp; Restore for WordPress <small>beta</small></h1>
+        <h1>MyBackup <small>Manage Backups</small></h1>
         <p class="lead">Create backups from your WordPress website and restore files if necessary.</p>
-        <?php
-        $required = true;
-        if (function_exists('exec')) {
-            if ('' == exec('rsync --version ')) {
-                echo '
-                <p class="text-warning">The required Linux tool "rsync" is not available.</p>';
-                $required = false;
-            }
-        } else {
-            echo '
-                <p class="text-warning">The required PHP function "exec()" is not enabled.</p>';
-                $required = false;
-        }
-        if ($required) {
-        ?>
         <form role="form" id="myform">
 			<input type="hidden" name="Submitform" value="1">
 			<p>Check which directories you like to exclude from the backup. The "mybackup" directory is always excluded!</p>
@@ -79,14 +72,15 @@ include_once 'libs/func.php';
 			</div>
 			<div class="form-group">
 				<label>Backup description</label>
-				<input type="text" class="form-control descr" name="description" placeholder="Optional...">
+				<input type="text" class="form-control" name="description" placeholder="Optional...">
 			</div>
-            <button type="button" class="btn btn-default submitbtn" value="full">Full backup (incl. WP Core)</button>
-            <button type="button" class="btn btn-primary submitbtn" value="part">Part. backup (wp-content dir)</button>
+			<div class="text-center">
+				<button type="button" class="btn btn-default submitbtn" value="full">Full backup (incl. WP Core)</button>
+				<button type="button" class="btn btn-primary submitbtn" value="part">Part. backup (wp-content dir)</button>
+			</div>
         </form>
-        <?php } // end if $required ?>
 
-		<div id="msg" class="" role="alert"></div>
+		<div id="msg" class="<?php echo $alert_css; ?>" role="alert"><?php echo $msg; ?></div>
 		<table class="table table-striped filelist">
 			<thead>
 				<tr>
@@ -100,38 +94,35 @@ include_once 'libs/func.php';
 			<tbody>
 			<?php
 			$i = 1;
-			try {
-				//open the database
-				$types = array('full' => 'Full backup', 'part' => 'Partial backup');
-				$db = new PDO('sqlite:data/wpbackupsDb_PDO.sqlite');
-				$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				$default = '<tr><th>&nbsp;</th><td colspan="6">No backups right now!</td></tr>';
-				$result = $db->query("SELECT * FROM wpbackups WHERE 1 ORDER BY insertdate DESC");
-				$tablehtml = '';
-				foreach ($result as $res) {
-					$details = $types[$res['backuptype']];
-					if ($res['database'] == 0) $details .= ' - No database';
-					$details .= ' - Excl. directories: ';
-					if ($excl = unserialize($res['excludedata'])) {
-						$details .= (count($excl) > 0) ? implode(', ', $excl) : 'none';
-					} else {
-						$details .= 'none';
-					}
-					$tablehtml .= '
-					<tr id="'.$res['id'].'">
-					  <th scope="row">'.$i.'</th>
-					  <td>'.$res['dirname'].'<br><em>'.$details.'</em><br><em><strong>'.$res['description'].'</strong></em></td>
-					  <td>'.filesizeConvert($res['dirsize']).'</td>
-					  <td>'.date('d-m-Y H:i:s', $res['insertdate']).'</td>
-					  <td><a href="javascript:void(0);" class="btn btn-warning btn-xs restore">Restore</a></td>
-					  <td><a href="javascript:void(0);" class="btn btn-danger btn-xs delete">Delete</a></td>
-					</tr>';
-					$i++;
+				
+			$types = array('full' => 'Full backup', 'part' => 'Partial backup');
+			$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
+			$default = '<tr><th>&nbsp;</th><td colspan="6">No backups right now!</td></tr>';
+			$result = $db->query("SELECT * FROM wpbackups WHERE 1 ORDER BY insertdate DESC");
+			
+			$tablehtml = '';
+			while ($res = $result->fetchArray()) {
+				$details = $types[$res['backuptype']];
+				if ($res['database'] == 0) $details .= ' - No database';
+				$details .= ' - Excl. directories: ';
+				if ($excl = unserialize($res['excludedata'])) {
+					$details .= (count($excl) > 0) ? implode(', ', $excl) : 'none';
+				} else {
+					$details .= 'none';
 				}
-				echo ($tablehtml != '') ? $tablehtml : $default;
-			} catch(PDOException $e) {
-				echo '<tr><th>&nbsp;</th><td colspan="6">Exception : '.$e->getMessage().'</td></tr>';
+				$tablehtml .= '
+				<tr id="'.$res['id'].'">
+				  <th scope="row">'.$i.'</th>
+				  <td>'.$res['dirname'].'<br><em>'.$details.'</em><br><em><strong>'.$res['description'].'</strong></em></td>
+				  <td>'.filesizeConvert($res['dirsize']).'</td>
+				  <td>'.date('d-m-Y H:i:s', $res['insertdate']).'</td>
+				  <td><a href="javascript:void(0);" class="btn btn-warning btn-xs restore">Restore</a></td>
+				  <td><a href="javascript:void(0);" class="btn btn-danger btn-xs delete">Delete</a></td>
+				</tr>';
+				$i++;
 			}
+			echo ($tablehtml != '') ? $tablehtml : $default;
+			
 			?>
 			</tbody>
 		</table>

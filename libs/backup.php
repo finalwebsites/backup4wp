@@ -1,28 +1,39 @@
 <?php
 include_once 'func.php';
 include_once 'Mysqldump.php';
-$secret = 'f8dhfjdf7'; // This as env var and dynamic?
+if (false == check_cookie()) {
+	die('Unauthorized access!');
+}
+
+$excludes_options = array('cache', 'uploads', 'themes', 'plugins');
+ 
 /** TODO **/
-// Exlcude hidden files (maybe make the sql dump hidden too?)
+// Exlcude hidden files, wp-config.php
 
 if (isset($_POST['Submitform'])) {
-	$dirname = md5($secret.time());
+	$type = ($_POST['typebackup'] == 'full') ? 'full' : 'part';
+	$description = filter_var($_POST['description'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+	$dirname = $type.'_'.date('Y-m-d_H:i:s').'_'.rand(1000,9999);
 	$partbackup = false;
-	if ($_POST['typebackup'] == 'full') {
+	if ($type == 'full') {
 		$backup_src = ABSPATH;
-		$backup_targ = MYBACKUPDIR.'files/'.$dirname;
+		$backup_targ = DATAPATH.$dirname;
 	} else {
 		$backup_src = ABSPATH.'wp-content/';
-		$backup_targ = MYBACKUPDIR.'files/'.$dirname.'/wp-content';
+		$backup_targ = DATAPATH.$dirname.'/wp-content';
 		$partbackup = true;
 	}
 	mkdir($backup_targ, 0755, true);
 	$excl_str = '';
+	$excl_array = array();
 	if (!empty($_POST['exclude'])) {
 		$info .= 'Excl. ';
 		foreach ($_POST['exclude'] as $excl) {
-			$pathpart = ($partbackup) ? $excl : 'wp-content/'.$excl;
-			$excl_str .= ' --exclude '.$pathpart;
+			if (in_array($excl, $excludes_options)) {
+				$pathpart = ($partbackup) ? $excl : 'wp-content/'.$excl;
+				$excl_str .= ' --exclude '.$pathpart;
+				$excl_array[] = $excl;
+			}
 		}
 	}
 	$database = 0;
@@ -31,30 +42,26 @@ if (isset($_POST['Submitform'])) {
 
 		if (isset($conn['DB_NAME'], $conn['DB_USER'], $conn['DB_PASSWORD'])) {
 			$database = 1;
-			//exec(sprintf('mysqldump --user=%s --password=%s %s --result-file=%sfiles/%s/database.sql', $conn['DB_USER'], $conn['DB_PASSWORD'], $conn['DB_NAME'], MYBACKUPDIR, $dirname));
+
 
 			$dump = new Ifsnop\Mysqldump\Mysqldump('mysql:host='.$conn['DB_HOST'].';dbname='.$conn['DB_NAME'], $conn['DB_USER'], $conn['DB_PASSWORD'], array('add-drop-table' => true));
-			$dump->start(MYBACKUPDIR.'files/'.$dirname.'/database.sql');
+			$dump->start(DATAPATH.$dirname.'/database.sql');
 		}
 	}
 	$sync = sprintf('rsync -av --exclude mybackup%s %s %s', $excl_str, $backup_src, $backup_targ);
 	exec($sync);
-	$dirsize = dirSize(MYBACKUPDIR.'files/'.$dirname);
-	try {
-		//open the database
-		$db = new PDO('sqlite:../data/wpbackupsDb_PDO.sqlite');
-		$insert = "INSERT INTO wpbackups (dirname, dirsize, insertdate, excludedata, backuptype, database, description) VALUES (:dirname, :dirsize, :insertdate, :excludedata, :backuptype, :database, :description)";
-		$stmt = $db->prepare($insert);
+	$dirsize = dirSize(DATAPATH.$dirname);
+	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
+		$stmt = $db->prepare("INSERT INTO wpbackups (dirname, dirsize, insertdate, excludedata, backuptype, database, description) VALUES (:dirname, :dirsize, :insertdate, :excludedata, :backuptype, :database, :description)");
 		$stmt->bindValue(':dirname', $dirname, SQLITE3_TEXT);
 		$stmt->bindValue(':dirsize', $dirsize, SQLITE3_INTEGER);
 		$stmt->bindValue(':insertdate', time(), SQLITE3_INTEGER);
-		$stmt->bindValue(':excludedata', serialize($_POST['exclude']), SQLITE3_TEXT);
-		$stmt->bindValue(':backuptype', $_POST['typebackup'], SQLITE3_TEXT);
+		$stmt->bindValue(':excludedata', serialize($excl_array), SQLITE3_TEXT);
+		$stmt->bindValue(':backuptype', $type, SQLITE3_TEXT);
 		$stmt->bindValue(':database', $database, SQLITE3_INTEGER);
-		$stmt->bindValue(':description', $_POST['description'], SQLITE3_TEXT);
-		$stmt->execute();
-	} catch(PDOException $e) {
-		print 'Exception : '.$e->getMessage();
+		$stmt->bindValue(':description', $description, SQLITE3_TEXT);
+		if ($stmt->execute()) {
+			echo 'okay';
+		}
 	}
-	echo 'okay';
 }
