@@ -1,6 +1,7 @@
 <?php
 include_once 'libs/func.php';
-get_authorized();
+
+
 $msg = '';
 $alert_css = '';
 
@@ -16,10 +17,15 @@ if (function_exists('exec')) {
 	$msg = 'The required PHP function "exec()" is not enabled.';
 	$required = false;
 }
+// There has to be a test for a valid MySQL connection
+// SMTP email option (using the PHPMailer class from WordPress
         
 if ($required) {
 	$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
 	if ($res = $db->querySingle("SELECT sendgridapi, adminemail, emailfrom, confirmed FROM backupsettings WHERE id = 1", true)) {
+		if ($res['adminemail'] != '') {
+			get_authorized();
+		}
 		$sendgridapi = $res['sendgridapi'];
 		$adminemail = $res['adminemail'];
 		$emailfrom = $res['emailfrom'];
