@@ -1,7 +1,7 @@
 <?php
 
 include_once 'func.php';
-
+// todo google recaptcha
 
 if (!empty($_POST['mailto'])) {
 	if (filter_var($_POST['mailto'], FILTER_VALIDATE_EMAIL)) {
@@ -23,5 +23,5 @@ if (!empty($_POST['mailto'])) {
 			echo 'Error: '.$db->lastErrorMsg;
 		}
 		$db->close;
-	} 
+	}
 }

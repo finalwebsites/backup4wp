@@ -12,40 +12,40 @@ if (!file_exists(DATAPATH)) {
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
 		$db->exec("
 			CREATE TABLE IF NOT EXISTS wpbackups (
-				'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-				'dirname' TEXT, 
-				'dirsize' INTEGER, 
+				'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+				'dirname' TEXT,
+				'dirsize' INTEGER,
 				'insertdate' INTEGER,
-				'excludedata' TEXT, 
-				'backuptype' TEXT, 
-				'database' INTEGER, 
+				'excludedata' TEXT,
+				'backuptype' TEXT,
+				'database' INTEGER,
 				'description' TEXT
 			)"
-		);   
+		);
 		$db->exec("
 			CREATE TABLE IF NOT EXISTS backupsettings (
-				'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-				'sendgridapi' TEXT, 
-				'emailfrom' TEXT, 
+				'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+				'sendgridapi' TEXT,
+				'emailfrom' TEXT,
 				'adminemail' TEXT,
 				'confirmed' TEXT
 			)"
 		);
 		$db->exec("
-			INSERT INTO backupsettings (id, sendgridapi, emailfrom, adminemail, confirmed) 
+			INSERT INTO backupsettings (id, sendgridapi, emailfrom, adminemail, confirmed)
 			VALUES (1, '', '', '', 'no')"
 		);
-		
+
 		$db->exec("
 			CREATE TABLE IF NOT EXISTS logins (
-				'slug' TEXT PRIMARY KEY NOT NULL, 
-				'created' TEXT, 
+				'slug' TEXT PRIMARY KEY NOT NULL,
+				'created' TEXT,
 				'ipadres' TEXT
 			)"
-		);  
+		);
 		$db->close();
 	}
-	
+
 }
 
 function check_cookie() {
@@ -54,10 +54,15 @@ function check_cookie() {
 	} else {
 		if (preg_match('/^[a-f0-9]{32}$/i', $_COOKIE['mybackup_access'], $matches)) {
 			$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
-			$stmt = $db->prepare("SELECT created, ipadres FROM logins WHERE slug = :slug ORDER BY created DESC");
+			$stmt = $db->prepare("SELECT ipadres FROM logins WHERE slug = :slug ORDER BY created DESC");
 			$stmt->bindValue(':slug', $matches[0], SQLITE3_TEXT);
-			if ($stmt->execute()) {
-				return $matches[0];
+			$res = $stmt->execute();
+			if ($result = $res->fetchArray()) {
+				if ($result['ipadres'] == $_SERVER['REMOTE_ADDR']) {
+					return $matches[0];
+				} else {
+					return false;
+				}
 			} else {
 				return false;
 			}
@@ -76,7 +81,7 @@ function get_authorized() {
 		if ($confirmed != 'yes' && empty($_GET['auth'])) {
 			header('Location: '.$home.'options.php');
 			exit;
-	
+
 		} elseif (isset($_GET['auth']) && preg_match('/^[a-f0-9]{32}$/i', $_GET['auth'], $matches)) {
 			$slug = $matches[0];
 			$stmt = $db->prepare("SELECT created, ipadres FROM logins WHERE slug = :slug ORDER BY created DESC");
@@ -116,7 +121,7 @@ function get_authorized() {
 			}
 		}
 	}
-	
+
 }
 
 function create_login_url() {
@@ -131,15 +136,15 @@ function create_login_url() {
 		if ($stmt->execute()) {
 			$db->close();
 			return $url.$slug;
-		} 
+		}
 	}
 }
 
 
 function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfully.' ) {
-	
+
 	require_once MYBACKUPDIR . 'libs/sendgrid/sendgrid-php.php';
-	
+
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
 		$result = $db->querySingle("SELECT sendgridapi, emailfrom FROM backupsettings WHERE id = 1", true);
 		if ($result['sendgridapi'] == '') {

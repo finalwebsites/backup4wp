@@ -1,6 +1,6 @@
 <?php
 include_once 'libs/func.php';
-
+// todo google recaptcha
 $alert_css = '';
 $msg = '';
 
@@ -54,19 +54,19 @@ if (isset($_GET['msg']) && array_key_exists($_GET['msg'], $messages)) {
         <h1>MyBackup <small>Request access</small></h1>
         <p class="lead">Enter below the email address you've use during installation.</p>
         <div id="msg" class="<?php echo $alert_css; ?>" role="alert"><?php echo $msg; ?></div>
-		<div class="settings-container">	
+		<div class="settings-container">
 			<form class="form-inline text-center">
-			  
+
 			  <div class="form-group">
 				  <label for="emailto" class="control-label">Email address</label>
 				  <input type="email" class="form-control" id="emailto" placeholder="your@email.com">
 
 			  </div>
-			 
-	
+
+
 			  <button type="button" class="btn btn-primary" id="saveoptions">Request access</button>
 			</form>
-        </div>  
+        </div>
 
       </div>
 

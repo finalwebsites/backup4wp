@@ -23,7 +23,7 @@ The tool doesn't store any database logins and all files are stored in a directo
 
 ## Installation
 
-Download the files as a zip or via the GIT tools on your server. Place/upload the files into a directory named "mybackup" and place it into the website's public folder. Access the tool and enter your email address and enter you Sendgrid API key. Confirm your email address via the link you get in your mailbox.
+Download the files as a zip or via the GIT tools on your server. Place/upload the files into a directory named "mybackup" and place it into the website's public folder. Access the tool and enter your email address and enter your Sendgrid API key. Confirm your email address via the link you get in your mailbox.
 
 ### Installation snippet for ManageWP users
 
