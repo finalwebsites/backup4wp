@@ -4,6 +4,16 @@ define('MYBACKUPDIR', dirname(dirname(__FILE__)).'/');
 define('ABSPATH', dirname(MYBACKUPDIR).'/');
 define('DATAPATH', dirname(dirname(MYBACKUPDIR)).'/backups/');
 
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+require MYBACKUPDIR . 'libs/phpmailer/Exception.php';
+require MYBACKUPDIR . 'libs/phpmailer/PHPMailer.php';
+require MYBACKUPDIR . 'libs/phpmailer/SMTP.php';
+
+require_once MYBACKUPDIR . 'libs/sendgrid/sendgrid-php.php';
+
 // This should be the part of the install process
 if (!file_exists(DATAPATH)) {
 
@@ -26,14 +36,21 @@ if (!file_exists(DATAPATH)) {
 			CREATE TABLE IF NOT EXISTS backupsettings (
 				'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 				'sendgridapi' TEXT,
+				'smtpserver' TEXT,
+				'smtpport' INTEGER,
+				'smtplogin' TEXT,
+				'smtppassword' TEXT,
+				'smtpsecure', TEXT,
 				'emailfrom' TEXT,
 				'adminemail' TEXT,
-				'confirmed' TEXT
+				'confirmed' TEXT,
+				'lastupdate' TEXT
 			)"
 		);
+
 		$db->exec("
-			INSERT INTO backupsettings (id, sendgridapi, emailfrom, adminemail, confirmed)
-			VALUES (1, '', '', '', 'no')"
+			INSERT INTO backupsettings (id, sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom, adminemail, confirmed, lastupdate)
+			VALUES (1, '', '', 587, '', '', 'tls', '', '', 'no', '')"
 		);
 
 		$db->exec("
@@ -45,7 +62,19 @@ if (!file_exists(DATAPATH)) {
 		);
 		$db->close();
 	}
+}
 
+function update_mybackup() {
+	$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
+	$test = $db->querySingle("SELECT * FROM backupsettings WHERE id = 1", true);
+	if (count($test) == 4) {
+		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtpserver TEXT");
+		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtpport INTEGER");
+		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtplogin TEXT");
+		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtppassword TEXT");
+		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtpsecure TEXT");
+		$db->exec("ALTER TABLE backupsettings ADD COLUMN lastupdate TEXT");
+	}
 }
 
 function check_cookie() {
@@ -79,9 +108,11 @@ function get_authorized() {
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
 		$confirmed = $db->querySingle("SELECT confirmed FROM backupsettings WHERE id = 1");
 		if ($confirmed != 'yes' && empty($_GET['auth'])) {
-			header('Location: '.$home.'options.php');
-			exit;
-
+			if ($_SERVER['REQUEST_URI'] != '/mybackup/options.php') {
+				header('Location: '.$home.'options.php');
+				exit;
+			}
+			
 		} elseif (isset($_GET['auth']) && preg_match('/^[a-f0-9]{32}$/i', $_GET['auth'], $matches)) {
 			$slug = $matches[0];
 			$stmt = $db->prepare("SELECT created, ipadres FROM logins WHERE slug = :slug ORDER BY created DESC");
@@ -98,7 +129,7 @@ function get_authorized() {
 					} else {
 						setcookie("mybackup_access", $matches[0], time()+(3600*4), "/mybackup/", $_SERVER['HTTP_HOST'], true);
 						$confirmed = $db->querySingle("SELECT confirmed FROM backupsettings WHERE id = 1");
-						if ($confirmed = 'no') {
+						if ($confirmed == 'no') {
 							$db->exec("UPDATE backupsettings SET confirmed = 'yes' WHERE id = 1");
 							header('Location: '.$home.'?msg=confirmed');
 							exit;
@@ -143,23 +174,10 @@ function create_login_url() {
 
 function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfully.' ) {
 
-	require_once MYBACKUPDIR . 'libs/sendgrid/sendgrid-php.php';
-
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
-		$result = $db->querySingle("SELECT sendgridapi, emailfrom FROM backupsettings WHERE id = 1", true);
-		if ($result['sendgridapi'] == '') {
-			$headers = array(
-				'From: '.$result->emailfrom,
-				'X-Mailer: PHP/' . phpversion(),
-				'MIME-Version: 1.0',
-				'Content-type: text/html; charset=utf-8'
-			);
-			if (mail($to, $subject, $msg, implode("\r\n", $headers))) {
-				return $return_msg;
-			} else {
-				return 'Error, the message hasn\'t been send via the PHP mail() function. Use the Sendgrid option instead.';
-			}
-		} else {
+		$result = $db->querySingle("SELECT sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom FROM backupsettings WHERE id = 1", true);
+		if ($result['sendgridapi'] != '') {
+			
 			$email = new \SendGrid\Mail\Mail();
 			$email->setFrom($result['emailfrom'], 'MyBackup for WordPress');
 			$email->setSubject($subject);
@@ -177,6 +195,40 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 				}
 			} catch (Exception $e) {
 				return 'Caught exception: '. $e->getMessage() ."\n";
+			}
+		} elseif ($result['smtpserver'] != '') {
+			
+			$mail = new PHPMailer(true);
+			try {
+				$mail->isSMTP(); 
+				$mail->Host = $result['smtpserver']; 
+				$mail->SMTPAuth = true;  
+				$mail->Username = $result['smtplogin'];
+				$mail->Password = $result['smtppassword']; 
+				$mail->SMTPSecure = $result['smtpsecure']; 
+				$mail->Port = $result['smtpport'];  
+				$mail->setFrom($result['emailfrom'], 'MyBackup for WordPress');
+				$mail->addAddress($to); 
+				$mail->isHTML(true);
+				$mail->Subject = $subject;
+				$mail->Body = $msg;
+				$mail->AltBody = strip_tags($msg);
+				$mail->send();
+				return $return_msg;
+			} catch (Exception $e) {
+				return 'Message could not be sent. Mailer Error: '.$mail->ErrorInfo;
+			}
+		} else {
+			$headers = array(
+				'From: '.$result->emailfrom,
+				'X-Mailer: PHP/' . phpversion(),
+				'MIME-Version: 1.0',
+				'Content-type: text/html; charset=utf-8'
+			);
+			if (mail($to, $subject, $msg, implode("\r\n", $headers))) {
+				return $return_msg;
+			} else {
+				return 'Error, the message hasn\'t been send via the PHP mail() function. Use the SMTP or Sendgrid option instead.';
 			}
 		}
 	}
@@ -197,6 +249,8 @@ function get_db_conn_vals($dir) {
 					$conn['DB_PASSWORD'] = $match[2];
 				} elseif ( preg_match('/^\s*define\s*\(\s*[\'"]DB_HOST[\'"]\s*,\s*[\'"](.+?)[\'"]/', $line, $match) ) {
 					$conn['DB_HOST'] = $match[1];
+				} elseif ( preg_match('/^\s*\$table_prefix\s*\=\s*[\'"]([a-zA-Z0-9_\-]*)[\'"]/', $line, $match) ) {
+					$conn['DB_PREFIX'] = $match[1];
 				}
 			}
 			fclose($fc);

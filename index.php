@@ -1,6 +1,7 @@
 <?php
 include_once 'libs/func.php';
 get_authorized();
+update_mybackup();
 $msg = '';
 $alert_css = '';
 if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
