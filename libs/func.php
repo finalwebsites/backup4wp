@@ -44,13 +44,14 @@ if (!file_exists(DATAPATH)) {
 				'emailfrom' TEXT,
 				'adminemail' TEXT,
 				'confirmed' TEXT,
+				'emailtype' TEXT,
 				'lastupdate' TEXT
 			)"
 		);
 
 		$db->exec("
-			INSERT INTO backupsettings (id, sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom, adminemail, confirmed, lastupdate)
-			VALUES (1, '', '', 587, '', '', 'tls', '', '', 'no', '')"
+			INSERT INTO backupsettings (id, sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom, adminemail, confirmed, emailtype, lastupdate)
+			VALUES (1, '', '', 587, '', '', 'tls', '', '', 'no', 'sendgrid', '')"
 		);
 
 		$db->exec("
@@ -67,13 +68,20 @@ if (!file_exists(DATAPATH)) {
 function update_mybackup() {
 	$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
 	$test = $db->querySingle("SELECT * FROM backupsettings WHERE id = 1", true);
-	if (count($test) == 4) {
+	if (count($test) == 5) {
 		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtpserver TEXT");
 		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtpport INTEGER");
 		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtplogin TEXT");
 		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtppassword TEXT");
 		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtpsecure TEXT");
+		$db->exec("ALTER TABLE backupsettings ADD COLUMN emailtype TEXT");
 		$db->exec("ALTER TABLE backupsettings ADD COLUMN lastupdate TEXT");
+		$stmt = $db->prepare("UPDATE backupsettings SET smtpport = :smtpport, smtpsecure = :smtpsecure, emailtype = :emailtype, lastupdate = :lastupdate WHERE id = 1");
+		$stmt->bindValue(':smtpport', $smtpport, SQLITE3_INTEGER);
+		$stmt->bindValue(':smtpsecure', $smtpsecure, SQLITE3_TEXT);
+		$stmt->bindValue(':emailtype', $emailtype, SQLITE3_TEXT);
+		$stmt->bindValue(':lastupdate', date('Y-m-d h:i:s'), SQLITE3_TEXT);
+		$stmt->execute();
 	}
 }
 
@@ -175,8 +183,8 @@ function create_login_url() {
 function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfully.' ) {
 
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
-		$result = $db->querySingle("SELECT sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom FROM backupsettings WHERE id = 1", true);
-		if ($result['sendgridapi'] != '') {
+		$result = $db->querySingle("SELECT sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom, emailtype FROM backupsettings WHERE id = 1", true);
+		if ($result['emailtype'] == 'sendgrid') {
 			
 			$email = new \SendGrid\Mail\Mail();
 			$email->setFrom($result['emailfrom'], 'MyBackup for WordPress');
@@ -196,7 +204,7 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 			} catch (Exception $e) {
 				return 'Caught exception: '. $e->getMessage() ."\n";
 			}
-		} elseif ($result['smtpserver'] != '') {
+		} elseif ($result['emailtype'] == 'smtp') {
 			
 			$mail = new PHPMailer(true);
 			try {

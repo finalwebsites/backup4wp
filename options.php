@@ -40,8 +40,8 @@ if ($db = mysqli_connect($wp_db['DB_HOST'], $wp_db['DB_USER'], $wp_db['DB_PASSWO
 
 if ($required) {
 	$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
-	$res = $db->querySingle("SELECT sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, adminemail, emailfrom, confirmed, lastupdate FROM backupsettings WHERE id = 1", true);
-	print_r($res);
+	$res = $db->querySingle("SELECT sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, adminemail, emailfrom, confirmed, emailtype, lastupdate FROM backupsettings WHERE id = 1", true);
+	//print_r($res);
 	if ($res['confirmed'] == 'yes') {
 		get_authorized();
 	}
@@ -53,6 +53,7 @@ if ($required) {
 	$smtplogin = $res['smtplogin'];
 	$smtppassword = $res['smtppassword'];
 	$smtpsecure = $res['smtpsecure'];
+	$emailtype = $res['emailtype'];
 	if ($res['lastupdate'] == '') {
 		$sendgridapi = $sendgrid_api_key;
 		$adminemail = $admin_email;
@@ -67,6 +68,10 @@ if ($required) {
 	}
 	$checked['tls'] = ($smtpsecure == 'tls') ? 'checked' : '';
 	$checked['ssl'] = ($smtpsecure == 'ssl') ? 'checked' : '';
+	$checked['mail'] = ($emailtype == 'mail') ? 'checked' : '';
+	$checked['smtp'] = ($emailtype == 'smtp') ? 'checked' : '';
+	$checked['sendgrid'] = ($emailtype == 'sendgrid') ? 'checked' : '';
+	
 }
 ?>
 <!DOCTYPE html>
@@ -104,18 +109,43 @@ if ($required) {
     <div class="container outwrapper">
       <div class="starter-template">
         <h1>MyBackup <small>Options</small></h1>
-        <p class="lead">We recomend to use <a href="https://sendgrid.com/" target="_blank">Sendgrid</a> as transactional email provider. They offer a free account and the delivery rates are much better compared to the native PHP mail function. Of course you can use a SMTP server too.</p>
+        <p class="lead">You can send the authentication emails via the Sendrid API, a SMTP server or the native PHP mail() function. </p>
         <div id="msg" class="<?php echo $alert_css; ?>" role="alert"><?php echo $msg; ?></div>
         
         
         <?php if ($required) { ?>
 		<div class="settings-container">
-			<p>If you enter the Sengrid API, the SMTP options are ingnored. Keep both empty to use the PHP mail() function.</p>
 			<form class="form" id="optionform">
+			  <div class="well well-sm">
+				<div class="form-group row">
+				  <div class="col-md-6">
+					<label for="emailfrom">Email address (from)</label>
+					<input type="email" class="form-control" id="emailfrom" name="emailfrom" value="<?php echo $emailfrom; ?>">
+				 </div>
+				 <div class="col-md-6">
+					<label for="adminemail">Email address (to)</label>
+					<input type="email" class="form-control" id="adminemail" name="adminemail" value="<?php echo $adminemail; ?>">
+				 </div>
+			    </div>
+				<p>Both email addresses are used to send the authentication emails.</p>
+			  </div>
+			  <p>How do you like to send the authentication emails? If you switch the options, it's not necessary to empty the other fields.</p>
+			  <div class="form-group">
+				<strong>Send emails via</strong>
+				<label class="radio-inline">
+				  <input type="radio" id="mailtype_sendgrid" name="emailtype" value="sendgrid" <?php echo $checked['sendgrid']; ?>> Sendgrid
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" id="mailtype_smtp" name="emailtype" value="smtp" <?php echo $checked['smtp']; ?>> SMTP
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" id="mailtype_mail" name="emailtype" value="mail" <?php echo $checked['mail']; ?>> PHP mail()
+				</label>
+			  </div>
 			  <div class="form-group">
 				<label for="sendgridapi">Sendgrid API key</label>
 				  <input type="text" class="form-control" id="sendgridapi" name="sendgridapi" value="<?php echo $sendgridapi; ?>" aria-describedby="sendgridapihelp">
-				  <span id="sendgridapihelp" class="help-block">Make this field emtpty to use the SMTP options below.</span>
+				  <span id="sendgridapihelp" class="help-block">We recomend to use <a href="https://sendgrid.com/" target="_blank">Sendgrid</a> as transactional email provider. They offer a free account and the delivery rates are much better compared to the native PHP mail function.</span>
 			  </div>
 			  
 			  <div class="form-group row">
@@ -149,20 +179,11 @@ if ($required) {
 				  </div>
 			  </div>
 			  
-			  <div class="form-group row">
-				  <div class="col-md-6">
-					<label for="emailfrom">Email address (from)</label>
-					<input type="email" class="form-control" id="emailfrom" name="emailfrom" value="<?php echo $emailfrom; ?>">
-				 </div>
-				 <div class="col-md-6">
-					<label for="adminemail">Email address (to)</label>
-					<input type="email" class="form-control" id="adminemail" name="adminemail" value="<?php echo $adminemail; ?>">
-				 </div>
-			  </div>
+			  
 			  
 			 
 			  <div class="text-center">
-				   <p>Both email addresses are used to send the authentication emails.</p>
+				   
 				  <button type="button" class="btn btn-primary" id="saveoptions">Save options</button>
 			  </div>
 			</form>
