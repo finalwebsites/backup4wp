@@ -14,7 +14,7 @@ The tool doesn't store any database logins and all files are stored in a directo
 
 ## Features
 * Super fast, a backup from a 500MB website takes only seconds!
-* Quick setup, using email credential from the plugins WP Mail SMTP or Sendgrid
+* Quick setup, using email credentials from existing plugins like WP Mail SMTP or Sendgrid
 * Backup with a single mouse click (full or partly backups)
 * Exclude themes, plugins or media files
 * Restore your site even if the WordPress website doesn't work anymore
@@ -53,9 +53,14 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
     }
 
 
+## Update notes
+*14th September 2020*
+We changed the options page that users can use their SMTP server credentials now. To keep those settings in MyBackup, we added several columns to the table "backupsettings". To get the update you need to replace the whole "mybackup" directory (keep your "backups" directory!) and visit the main page. The function "update_mybackup()" will add the missing database table columns. Optionally, add your own SMTP server credentials.
+
 ## Credits
 * [Mysqldump by Diego Torres](https://github.com/ifsnop/mysqldump-php)
 * [PHP library for the Sendgrid API v3](https://github.com/sendgrid/sendgrid-php/)
+* [PHPMailer - The classic email sending library for PHP](https://github.com/PHPMailer/PHPMailer)
 
 ## Disclaimer
 
