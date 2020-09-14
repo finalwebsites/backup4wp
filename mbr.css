@@ -1,5 +1,6 @@
 body {
   padding-top: 50px;
+  padding-bottom:30px;
 }
 .outwrapper { max-width:800px; }
 .starter-template {
@@ -8,7 +9,7 @@ body {
 }
 #myform { margin-bottom:20px; }
 table.filelist { margin-top:40px;text-align:left; }
-table.filelist tbody tr td em { font-size:0.8em;color:#7F7F7F; }
+table.filelist tbody tr td em { color:#7F7F7F; }
 
 #msg { text-align:center; }
 

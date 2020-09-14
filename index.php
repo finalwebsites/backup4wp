@@ -86,9 +86,9 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
 			<thead>
 				<tr>
 				  <th>#</th>
-				  <th>Filename</th>
+				  <th>Backup</th>
 				  <th>Filesize</th>
-				  <th>Backup date &amp; time</th>
+				  <th>Date &amp; time</th>
 				  <th colspan="2">Actions</th>
 				</tr>
 			</thead>
@@ -114,7 +114,7 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
 				$tablehtml .= '
 				<tr id="'.$res['id'].'">
 				  <th scope="row">'.$i.'</th>
-				  <td>'.$res['dirname'].'<br><em>'.$details.'</em><br><em><strong>'.$res['description'].'</strong></em></td>
+				  <td>'.$details.'<br><em>'.$res['description'].'</em></td>
 				  <td>'.filesizeConvert($res['dirsize']).'</td>
 				  <td>'.date('d-m-Y H:i:s', $res['insertdate']).'</td>
 				  <td><a href="javascript:void(0);" class="btn btn-warning btn-xs restore">Restore</a></td>
