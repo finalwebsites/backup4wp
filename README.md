@@ -4,7 +4,6 @@ You know the problem, you've created a backup for your website using a WordPress
 Using this backup tool you're able to create a backup outside WordPress. Access the tool again if you need to restore the website. We use the tool to create backups if we install a new theme / plugin or before we do some (smaller) updates.
 
 ### How does it work?
-
 The backup tool makes a copy from your WordPress website and stores the files in a directory outside the public directory. A database dump is also stored in the same directory. During the restore function the files from the backup are moved back to the original location. The database dump is used to restore the database as well.
 
 ### Test the tool first!
@@ -15,6 +14,7 @@ The tool doesn't store any database logins and all files are stored in a directo
 
 ## Features
 * Super fast, a backup from a 500MB website takes only seconds!
+* Quick setup, using email credential from the plugins WP Mail SMTP or Sendgrid
 * Backup with a single mouse click (full or partly backups)
 * Exclude themes, plugins or media files
 * Restore your site even if the WordPress website doesn't work anymore
@@ -23,11 +23,11 @@ The tool doesn't store any database logins and all files are stored in a directo
 
 ## Installation
 
-Download the files as a zip or via the GIT tools on your server. Place/upload the files into a directory named "mybackup" and place it into the website's public folder. Access the tool and enter your email address and enter your Sendgrid API key. Confirm your email address via the link you get in your mailbox.
+Download the files as a zip or via the GIT tools on your server. Place/upload the files into a directory named "mybackup" and place it into the website's public folder. Access the tool and enter your email address and enter your Sendgrid API key or your SMTP credentials. Confirm your email address via the link you get in your mailbox.
 
 ### Installation snippet for ManageWP users
 
-Use this snippet if you use ManageWP. Just run the code and access the tool and finish the "Installation".
+Use this snippet if you use ManageWP. Just run the code and access the tool and finish the "Installation". **Continue with the Installation as subscribed before!**
 
     <?php
     $dir = dirname(dirname(dirname(__DIR__))).'/mybackup';
