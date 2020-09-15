@@ -127,7 +127,7 @@ if ($required) {
 					<input type="email" class="form-control" id="adminemail" name="adminemail" value="<?php echo $adminemail; ?>">
 				 </div>
 			    </div>
-				<p>Both email addresses are used to send the authentication emails.</p>
+				<p>Both email addresses are required and used to send the MyBackup authentication emails.</p>
 			  </div>
 			  <p>How do you like to send the authentication emails? If you switch the options, it's not necessary to empty the other fields.</p>
 			  <div class="form-group">
@@ -142,48 +142,56 @@ if ($required) {
 				  <input type="radio" id="mailtype_mail" name="emailtype" value="mail" <?php echo $checked['mail']; ?>> PHP mail()
 				</label>
 			  </div>
-			  <div class="form-group">
-				<label for="sendgridapi">Sendgrid API key</label>
-				  <input type="text" class="form-control" id="sendgridapi" name="sendgridapi" value="<?php echo $sendgridapi; ?>" aria-describedby="sendgridapihelp">
-				  <span id="sendgridapihelp" class="help-block">We recomend to use <a href="https://sendgrid.com/" target="_blank">Sendgrid</a> as transactional email provider. They offer a free account and the delivery rates are much better compared to the native PHP mail function.</span>
-			  </div>
-			  
-			  <div class="form-group row">
-				  <div class="col-md-6">
-					<label for="emailfrom">SMTP host or server</label>
-					<input type="text" class="form-control" id="smtpserver" name="smtpserver" value="<?php echo $smtpserver; ?>">
-				  </div>
-				  <div class="col-md-6">
-					<label for="smtpport">SMTP port</label>
-					<input type="number" class="form-control" id="smtpport" name="smtpport" value="<?php echo $smtpport; ?>">
+			  <div class="send-options" id="use-sendgrid">
+				  <h2>Sendgrid</h2>
+				  <p>We recomend to use <a href="https://sendgrid.com/" target="_blank">Sendgrid</a> as transactional email provider. They offer a free account and the delivery rates are much better compared to the native PHP mail function.</p>
+				  <div class="form-group">
+					<label for="sendgridapi">Sendgrid API key</label>
+					  <input type="text" class="form-control" id="sendgridapi" name="sendgridapi" value="<?php echo $sendgridapi; ?>">
+					  
 				  </div>
 			  </div>
-			  <div class="form-group">
-				<strong>SMTP encryption</strong>
-				<label class="radio-inline">
-				  <input type="radio" id="smtpsecure_tls" name="smtpsecure" value="tls" <?php echo $checked['tls']; ?>> tls
-				</label>
-				<label class="radio-inline">
-				  <input type="radio" id="smtpsecure_ssl" name="smtpsecure" value="ssl" <?php echo $checked['ssl']; ?>> ssl
-				</label>
-			  </div>
-			  
-			  <div class="form-group row">
-				  <div class="col-md-6">
-					<label for="smtplogin">SMTP login</label>
-					<input type="text" class="form-control" id="smtplogin" name="smtplogin" value="<?php echo $smtplogin; ?>">
+			  <div class="send-options" id="use-smtp">
+				  <h2>SMTP</h2>
+				  <div class="form-group row">
+					  <div class="col-md-6">
+						<label for="emailfrom">SMTP host or server</label>
+						<input type="text" class="form-control" id="smtpserver" name="smtpserver" value="<?php echo $smtpserver; ?>">
+					  </div>
+					  <div class="col-md-6">
+						<label for="smtpport">SMTP port</label>
+						<input type="number" class="form-control" id="smtpport" name="smtpport" value="<?php echo $smtpport; ?>">
+					  </div>
 				  </div>
-				  <div class="col-md-6">
-					<label for="smtppassword">SMTP password</label>
-					<input type="text" class="form-control" id="smtppassword" name="smtppassword" value="<?php echo $smtppassword; ?>">
+				  <div class="form-group">
+					<strong>SMTP encryption</strong>
+					<label class="radio-inline">
+					  <input type="radio" id="smtpsecure_tls" name="smtpsecure" value="tls" <?php echo $checked['tls']; ?>> tls
+					</label>
+					<label class="radio-inline">
+					  <input type="radio" id="smtpsecure_ssl" name="smtpsecure" value="ssl" <?php echo $checked['ssl']; ?>> ssl
+					</label>
+				  </div>
+				  
+				  <div class="form-group row">
+					  <div class="col-md-6">
+						<label for="smtplogin">SMTP login</label>
+						<input type="text" class="form-control" id="smtplogin" name="smtplogin" value="<?php echo $smtplogin; ?>">
+					  </div>
+					  <div class="col-md-6">
+						<label for="smtppassword">SMTP password</label>
+						<input type="text" class="form-control" id="smtppassword" name="smtppassword" value="<?php echo $smtppassword; ?>">
+					  </div>
 				  </div>
 			  </div>
-			  
+			  <div class="send-options" id="use-mail">
+				  <h2>PHP mail()</h2>
+				  <p><strong>Sending emails via the PHP's mail() function is not recommended.</strong> There are no options to configure...</p>
+			  </div>
 			  
 			  
 			 
-			  <div class="text-center">
-				   
+			  <div class="text-right">
 				  <button type="button" class="btn btn-primary" id="saveoptions">Save options</button>
 			  </div>
 			</form>
@@ -197,6 +205,16 @@ if ($required) {
 	<script>
 
 	jQuery(document).ready(function($) {
+		
+		var curr_type = $("input[name='emailtype']:checked").val();
+        if (curr_type) {
+			$("#use-" + curr_type).show();
+		}
+		
+		$("[name=emailtype]").click(function(){
+			$('.send-options').hide();
+			$("#use-" + $(this).val()).show();
+		});
 
         $('#saveoptions').click(function(e) {
 			$('#msg').removeClass('alert-warning alert-success alert-danger alert').html('');

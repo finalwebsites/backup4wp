@@ -5,7 +5,6 @@ body {
 .outwrapper { max-width:800px; }
 .starter-template {
   padding: 10px;
-  /*text-align: center;*/
 }
 #myform { margin-bottom:20px; }
 table.filelist { margin-top:40px;text-align:left; }
@@ -13,3 +12,14 @@ table.filelist tbody tr td em { color:#7F7F7F; }
 
 #msg { text-align:center; }
 
+.send-options { 
+	display:none;
+	border:1px solid #e3e3e3;
+	padding: 9px;
+    border-radius: 3px;
+    margin:15px 0;
+}
+.send-options h2 {
+	margin-top: 10px;
+    font-size: 24px;
+}
