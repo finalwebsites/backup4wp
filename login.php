@@ -1,5 +1,6 @@
 <?php
 include_once 'libs/func.php';
+include_once 'libs/html.php';
 // todo google recaptcha
 $alert_css = '';
 $msg = '';
@@ -28,38 +29,18 @@ if (isset($_GET['msg']) && array_key_exists($_GET['msg'], $messages)) {
     <link href="mbr.css" rel="stylesheet">
   </head>
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container outwrapper">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">MyBackup for WordPress</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="index.php">Backup &amp; Restore</a></li>
-            <li><a href="/">Home</a></li>
-            <li><a href="../wp-admin/">WP Admin</a></li>
-             <li><a href="options.php">Options</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+    <?php echo mb_navigation('login'); ?>
     <div class="container outwrapper">
       <div class="starter-template">
-        <h1>MyBackup <small>Request access</small></h1>
-        <p class="lead">Enter below the email address you've use during installation.</p>
+        <h1>MyBackup <small>Login</small></h1>
+        <p class="lead">Enter below the email address you've entered via the "Options" page.<br><strong>Tip!</strong> It's often your WordPress admin email address.</p>
         <div id="msg" class="<?php echo $alert_css; ?>" role="alert"><?php echo $msg; ?></div>
 		<div class="settings-container">
-			<form class="form-inline text-center">
+			<form class="form-inline">
 
 			  <div class="form-group">
 				  <label for="emailto" class="control-label">Email address</label>
-				  <input type="email" class="form-control" id="emailto" placeholder="your@email.com">
+				  <input type="email" class="form-control" id="emailto" placeholder="your-email-address@domain.com">
 
 			  </div>
 

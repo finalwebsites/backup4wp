@@ -31,7 +31,7 @@ if (isset($_POST['Submitform'])) {
 		foreach ($_POST['exclude'] as $excl) {
 			if (in_array($excl, $excludes_options)) {
 				$pathpart = ($partbackup) ? $excl : 'wp-content/'.$excl;
-				$excl_str .= ' --exclude '.$pathpart;
+				$excl_str .= ' --exclude \'*.zip\' --exclude '.$pathpart;
 				$excl_array[] = $excl;
 			}
 		}

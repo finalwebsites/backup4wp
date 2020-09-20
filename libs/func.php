@@ -3,6 +3,8 @@
 define('MYBACKUPDIR', dirname(dirname(__FILE__)).'/');
 define('ABSPATH', dirname(MYBACKUPDIR).'/');
 define('DATAPATH', dirname(dirname(MYBACKUPDIR)).'/backups/');
+define('BASE_URL', '//'.$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']).'/');
+
 
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -95,7 +97,7 @@ function check_cookie() {
 			$stmt->bindValue(':slug', $matches[0], SQLITE3_TEXT);
 			$res = $stmt->execute();
 			if ($result = $res->fetchArray()) {
-				if ($result['ipadres'] == $_SERVER['REMOTE_ADDR']) {
+				if ($result['ipadres'] == get_client_ip()) {
 					return $matches[0];
 				} else {
 					return false;
@@ -131,7 +133,7 @@ function get_authorized() {
 					header('Location: '.$home.'login.php?msg=expiredlink');
 					exit;
 				} else {
-					if ($result['ipadres'] != $_SERVER['REMOTE_ADDR']) {
+					if ($result['ipadres'] != get_client_ip()) {
 						header('Location: '.$home.'login.php?msg=invalidsession');
 						exit;
 					} else {
@@ -171,7 +173,7 @@ function create_login_url() {
 		$stmt = $db->prepare("INSERT INTO logins (slug, created, ipadres) VALUES (:slug, :created, :ipadres)");
 		$stmt->bindValue(':slug', $slug, SQLITE3_TEXT);
 		$stmt->bindValue(':created', time(), SQLITE3_INTEGER);
-		$stmt->bindValue(':ipadres', $_SERVER['REMOTE_ADDR'], SQLITE3_TEXT);
+		$stmt->bindValue(':ipadres', get_client_ip(), SQLITE3_TEXT);
 		if ($stmt->execute()) {
 			$db->close();
 			return $url.$slug;
@@ -288,6 +290,20 @@ function restore_database($host, $username, $password, $dbname, $sql_path){
     }
 	$db->close();
     return ($error != '') ? $error : true;
+}
+
+function get_client_ip() {
+	foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key){
+		if (array_key_exists($key, $_SERVER) === true){
+			foreach (explode(',', $_SERVER[$key]) as $ip){
+				$ip = trim($ip); // just to be safe
+
+				if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false){
+					return $ip;
+				}
+			}
+		}
+	}
 }
 
 // Credits to Arseny Mogilev who posted this function to the PHP manual

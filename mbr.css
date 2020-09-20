@@ -2,12 +2,20 @@ body {
   padding-top: 50px;
   padding-bottom:30px;
 }
+h2 {
+	margin-top: 10px;
+    font-size: 24px;
+}
 .outwrapper { max-width:800px; }
 .starter-template {
   padding: 10px;
 }
+.navbar-inverse .navbar-brand { color: #fff; }
+
+.nav>li>a.nav-highlight { font-weight:700; }
+
 #myform { margin-bottom:20px; }
-table.filelist { margin-top:40px;text-align:left; }
+table.filelist { margin-top:10px;text-align:left; }
 table.filelist tbody tr td em { color:#7F7F7F; }
 
 #msg { text-align:center; }
@@ -19,7 +27,11 @@ table.filelist tbody tr td em { color:#7F7F7F; }
     border-radius: 3px;
     margin:15px 0;
 }
-.send-options h2 {
-	margin-top: 10px;
-    font-size: 24px;
+
+
+
+@media (min-width: 768px) {
+	.form-inline .form-control {
+		width: 250px;
+	}
 }

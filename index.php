@@ -1,5 +1,6 @@
 <?php
 include_once 'libs/func.php';
+include_once 'libs/html.php';
 get_authorized();
 update_mybackup();
 $msg = '';
@@ -16,39 +17,19 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Backup &amp; Restore for WordPress</title>
+    <title>Manage Backups | MyBackup for WordPress</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link href="mbr.css" rel="stylesheet">
   </head>
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container outwrapper">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">WordPress backup</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="index.php">Backup &amp; Restore</a></li>
-            <li><a href="/">Home</a></li>
-            <li><a href="../wp-admin/">WP Admin</a></li>
-             <li><a href="options.php">Options</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+    <?php echo mb_navigation('index'); ?>
     <div class="container outwrapper">
       <div class="starter-template">
         <h1>MyBackup <small>Manage Backups</small></h1>
         <p class="lead">Create backups from your WordPress website and restore files if necessary.</p>
         <form role="form" id="myform">
 			<input type="hidden" name="Submitform" value="1">
-			<p>Check which directories you like to exclude from the backup. The "mybackup" directory is always excluded!</p>
+			<p>Check which directories you like to exclude from the backup. ZIP files and the "mybackup" directory are always excluded!</p>
 			<div class="form-group">
 				<label class="checkbox-inline">
 				<input type="checkbox" name="exclude[]" value="cache" checked>
@@ -75,13 +56,14 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
 				<label>Backup description</label>
 				<input type="text" class="form-control" name="description" placeholder="Optional...">
 			</div>
-			<div class="text-center">
+			<div class="text-right">
 				<button type="button" class="btn btn-default submitbtn" value="full">Full backup (incl. WP Core)</button>
 				<button type="button" class="btn btn-primary submitbtn" value="part">Part. backup (wp-content dir)</button>
 			</div>
         </form>
-
+	
 		<div id="msg" class="<?php echo $alert_css; ?>" role="alert"><?php echo $msg; ?></div>
+		<h2>Your backups</h2>
 		<table class="table table-striped filelist">
 			<thead>
 				<tr>

@@ -1,6 +1,6 @@
 <?php
 include_once 'libs/func.php';
-
+include_once 'libs/html.php';
 
 $msg = '';
 $alert_css = '';
@@ -85,31 +85,11 @@ if ($required) {
     <link href="mbr.css" rel="stylesheet">
   </head>
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container outwrapper">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">MyBackup for WordPress</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="index.php">Backup &amp; Restore</a></li>
-            <li><a href="/">Home</a></li>
-            <li><a href="../wp-admin/">WP Admin</a></li>
-             <li class="active"><a href="options.php">Options</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+    <?php echo mb_navigation('options'); ?>
     <div class="container outwrapper">
       <div class="starter-template">
         <h1>MyBackup <small>Options</small></h1>
-        <p class="lead">You can send the authentication emails via the Sendrid API, a SMTP server or the native PHP mail() function. </p>
+        <p class="lead">You can send the authentication emails via Sendrid, a SMTP server or the native PHP mail() function. </p>
         <div id="msg" class="<?php echo $alert_css; ?>" role="alert"><?php echo $msg; ?></div>
         
         
@@ -131,7 +111,7 @@ if ($required) {
 			  </div>
 			  <p>How do you like to send the authentication emails? If you switch the options, it's not necessary to empty the other fields.</p>
 			  <div class="form-group">
-				<strong>Send emails via</strong>
+				<strong>Send emails via </strong>
 				<label class="radio-inline">
 				  <input type="radio" id="mailtype_sendgrid" name="emailtype" value="sendgrid" <?php echo $checked['sendgrid']; ?>> Sendgrid
 				</label>
@@ -153,25 +133,28 @@ if ($required) {
 			  </div>
 			  <div class="send-options" id="use-smtp">
 				  <h2>SMTP</h2>
-				  <div class="form-group row">
-					  <div class="col-md-6">
+				  <div class="row">
+					  <div class="form-group col-md-6">
 						<label for="emailfrom">SMTP host or server</label>
 						<input type="text" class="form-control" id="smtpserver" name="smtpserver" value="<?php echo $smtpserver; ?>">
 					  </div>
-					  <div class="col-md-6">
+					  <div class="form-group col-md-3">
 						<label for="smtpport">SMTP port</label>
 						<input type="number" class="form-control" id="smtpport" name="smtpport" value="<?php echo $smtpport; ?>">
 					  </div>
+					  <div class="form-group col-md-3">
+						<label>SMTP encryption</label>
+						<div>
+							<label class="radio-inline">
+								<input type="radio" id="smtpsecure_tls" name="smtpsecure" value="tls" <?php echo $checked['tls']; ?>> tls
+							</label>
+							<label class="radio-inline">
+								<input type="radio" id="smtpsecure_ssl" name="smtpsecure" value="ssl" <?php echo $checked['ssl']; ?>> ssl
+							</label>
+						</div>
+					  </div>
 				  </div>
-				  <div class="form-group">
-					<strong>SMTP encryption</strong>
-					<label class="radio-inline">
-					  <input type="radio" id="smtpsecure_tls" name="smtpsecure" value="tls" <?php echo $checked['tls']; ?>> tls
-					</label>
-					<label class="radio-inline">
-					  <input type="radio" id="smtpsecure_ssl" name="smtpsecure" value="ssl" <?php echo $checked['ssl']; ?>> ssl
-					</label>
-				  </div>
+
 				  
 				  <div class="form-group row">
 					  <div class="col-md-6">
