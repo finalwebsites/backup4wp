@@ -1,4 +1,4 @@
-# MyBackup for WordPress
+# Backup4WP
 
 You know the problem, you've created a backup for your website using a WordPress backup plugin and your WordPress website breaks after an update. Next you can't restore your website to the previous version because you can't access the WP dashboard anymore.
 Using this backup tool you're able to create a backup outside WordPress. Access the tool again if you need to restore the website. We use the tool to create backups if we install a new theme / plugin or before we do some (smaller) updates.
@@ -10,7 +10,7 @@ The backup tool makes a copy from your WordPress website and stores the files in
 This tool is using the Linux command line tool "rsync" to copy all the files. We're using the tool for years and it works perfect on all our web servers. It might break your site during the restore, so try the backup tool first on a similar test site.
 
 ### Security
-The tool doesn't store any database logins and all files are stored in a directory which is not accessible via the public website. To access the MyBackup tool, you need to authorize via a link that is send to your own email address. The session expires 4 hours of activity.
+The tool doesn't store any database logins and all files are stored in a directory which is not accessible via the public website. To access the Backup4WP tool, you need to authorize via a link that is send to your own email address. The session expires 4 hours of activity.
 
 ## Features
 * Super fast, a backup from a 500MB website takes only seconds!
@@ -34,7 +34,7 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
     if (file_exists($dir)) {
     	echo 'The MyBackup tool already exists!';
     } else {
-    	$url = 'https://github.com/finalwebsites/mybackup/archive/master.zip';
+    	$url = 'https://github.com/finalwebsites/backup4wp/archive/master.zip';
     	$ch = curl_init($url);
     	curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
     	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -45,7 +45,7 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
     	curl_close ($ch);
     	if ($success = file_put_contents('master.zip', $result)) {
     		echo 'Downloaded zip file ('.$success.' bytes)';
-    		exec('unzip master.zip && mv mybackup-master mybackup');
+    		exec('unzip master.zip && mv backup4wp-master mybackup');
     		unlink('master.zip');
     	} else {
     		echo 'Error while downloading zip file';
@@ -55,7 +55,7 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 
 ## Update notes
 *14th September 2020*
-We changed the options page that users can use their SMTP server credentials now. To keep those settings in MyBackup, we added several columns to the table "backupsettings". To get the update you need to replace the whole "mybackup" directory (keep your "backups" directory!) and visit the main page. The function "update_mybackup()" will add the missing database table columns. Optionally, add your own SMTP server credentials.
+We changed the options page that users can use their SMTP server credentials now. To keep those settings in Backup4WP, we added several columns to the table "backupsettings". To get the update you need to replace the whole "mybackup" directory (keep your "backups" directory!) and visit the main page. The function "update_mybackup()" will add the missing database table columns. Optionally, add your own SMTP server credentials.
 
 ## Credits
 * [Mysqldump by Diego Torres](https://github.com/ifsnop/mysqldump-php)
