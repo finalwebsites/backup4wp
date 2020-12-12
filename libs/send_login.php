@@ -14,8 +14,8 @@ if (!empty($_POST['mailto'])) {
 			if (filter_var($url, FILTER_VALIDATE_URL) === FALSE) {
 				echo 'Error: '.$url;
 			} else {
-				$message = email_template('Click the link bebow to access the MyBackup tool for your WordPress website.', $url);
-				$subject = 'Your WordPress MyBackup access link';
+				$message = email_template('Click the link bebow to access the Backup4WP tool for your WordPress website.', $url);
+				$subject = 'Your Backup4WP access link';
 				$response = sendemail( $email, $subject, $message, 'Message sent successfully. Check your inbox for the magic link.' );
 				echo $response;
 			}

@@ -148,7 +148,7 @@ function get_authorized() {
 				header('Location: '.$home.'options.php');
 				exit;
 			}
-			
+
 		} elseif (isset($_GET['auth']) && preg_match('/^[a-f0-9]{32}$/i', $_GET['auth'], $matches)) {
 			$slug = $matches[0];
 			$stmt = $db->prepare("SELECT created, ipadres FROM logins WHERE slug = :slug ORDER BY created DESC");
@@ -213,7 +213,7 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
 		$result = $db->querySingle("SELECT sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom, emailtype FROM backupsettings WHERE id = 1", true);
 		if ($result['emailtype'] == 'sendgrid') {
-			
+
 			$email = new \SendGrid\Mail\Mail();
 			$email->setFrom($result['emailfrom'], 'MyBackup for WordPress');
 			$email->setSubject($subject);
@@ -233,18 +233,18 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 				return 'Caught exception: '. $e->getMessage() ."\n";
 			}
 		} elseif ($result['emailtype'] == 'smtp') {
-			
+
 			$mail = new PHPMailer(true);
 			try {
-				$mail->isSMTP(); 
-				$mail->Host = $result['smtpserver']; 
-				$mail->SMTPAuth = true;  
+				$mail->isSMTP();
+				$mail->Host = $result['smtpserver'];
+				$mail->SMTPAuth = true;
 				$mail->Username = $result['smtplogin'];
-				$mail->Password = $result['smtppassword']; 
-				$mail->SMTPSecure = $result['smtpsecure']; 
-				$mail->Port = $result['smtpport'];  
+				$mail->Password = $result['smtppassword'];
+				$mail->SMTPSecure = $result['smtpsecure'];
+				$mail->Port = $result['smtpport'];
 				$mail->setFrom($result['emailfrom'], 'MyBackup for WordPress');
-				$mail->addAddress($to); 
+				$mail->addAddress($to);
 				$mail->isHTML(true);
 				$mail->Subject = $subject;
 				$mail->Body = $msg;
@@ -404,7 +404,7 @@ body {
 %s</p>
 <p><a href="%s">%s</a></p>
 <p>Kind regards,<br>
-MyBackup for WordPress</p>
+Team Backup4WP</p>
 </div>
 </body>
 </html>
