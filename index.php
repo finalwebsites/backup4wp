@@ -17,7 +17,7 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Manage Backups | MyBackup for WordPress</title>
+    <title>Manage Backups | Backup4WP</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link href="mbr.css" rel="stylesheet">
   </head>
@@ -25,7 +25,7 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
     <?php echo mb_navigation('index'); ?>
     <div class="container outwrapper">
       <div class="starter-template">
-        <h1>MyBackup <small>Manage Backups</small></h1>
+        <h1>Backup4WP <small>Manage Backups</small></h1>
         <p class="lead">Create backups from your WordPress website and restore files if necessary.</p>
         <form role="form" id="myform">
 			<input type="hidden" name="Submitform" value="1">
@@ -61,7 +61,7 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
 				<button type="button" class="btn btn-primary submitbtn" value="part">Part. backup (wp-content dir)</button>
 			</div>
         </form>
-	
+
 		<div id="msg" class="<?php echo $alert_css; ?>" role="alert"><?php echo $msg; ?></div>
 		<h2>Your backups</h2>
 		<table class="table table-striped filelist">
@@ -77,12 +77,12 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
 			<tbody>
 			<?php
 			$i = 1;
-				
+
 			$types = array('full' => 'Full backup', 'part' => 'Partial backup');
 			$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
 			$default = '<tr><th>&nbsp;</th><td colspan="6">No backups right now!</td></tr>';
 			$result = $db->query("SELECT * FROM wpbackups WHERE 1 ORDER BY insertdate DESC");
-			
+
 			$tablehtml = '';
 			while ($res = $result->fetchArray()) {
 				$details = $types[$res['backuptype']];
@@ -105,7 +105,7 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
 				$i++;
 			}
 			echo ($tablehtml != '') ? $tablehtml : $default;
-			
+
 			?>
 			</tbody>
 		</table>

@@ -5,7 +5,7 @@ function mb_navigation($current = '') {
 		'index' => array('url' => BASE_URL, 'label' => 'Manage Backups'),
 		'options' => array('url' => BASE_URL.'options.php', 'label' => 'Options'),
 		'home' => array('url' => '//'.$_SERVER['HTTP_HOST'], 'label' => 'Homepage'),
-		'wpadmin' => array('url' => '//'.$_SERVER['HTTP_HOST'].'/wp-admin/', 'label' => 'WP Dashboard'),	
+		'wpadmin' => array('url' => '//'.$_SERVER['HTTP_HOST'].'/wp-admin/', 'label' => 'WP Dashboard'),
 		'help' => array('url' => 'https://backup4wp.com/getting-help/', 'label' => '<span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Getting help', 'target' => '_blank', 'class' => 'nav-highlight')
 	);
 	$html = '
@@ -18,7 +18,7 @@ function mb_navigation($current = '') {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="https://backup4wp.com/" target="_blank">MyBackup for WordPress</a>
+          <a class="navbar-brand" href="https://backup4wp.com/" target="_blank">backup4wp</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">';

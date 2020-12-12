@@ -88,7 +88,9 @@ function update_mybackup() {
 }
 
 function check_cookie() {
-	if (empty($_COOKIE['mybackup_access'])) {
+	if (check_htaccess()) {
+		return true;
+	}elseif (empty($_COOKIE['mybackup_access'])) {
 		return false;
 	} else {
 		if (preg_match('/^[a-f0-9]{32}$/i', $_COOKIE['mybackup_access'], $matches)) {
@@ -111,8 +113,32 @@ function check_cookie() {
 	}
 }
 
+function check_htaccess() {
+	$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
+	$confirmed = $db->querySingle("SELECT confirmed FROM backupsettings WHERE id = 1");
+	if ($confirmed == 'yes') return false;
+	$file = MYBACKUPDIR.'.htaccess';
+	if (file_exists($file)) {
+		$f = fopen($file, 'r');
+		$line = trim(fgets($f));
+		fclose($f);
+		if ($line == 'order deny,allow') {
+			return true;
+		} elseif ($line == 'AuthGroupFile /dev/null') {
+			if (file_exists(MYBACKUPDIR.'.htpasswd')) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+}
+
 
 function get_authorized() {
+	if (check_htaccess()) return;
 	$home = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
 	$home .= '://'.$_SERVER['HTTP_HOST'].'/mybackup/';
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {

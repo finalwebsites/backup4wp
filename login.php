@@ -24,7 +24,7 @@ if (isset($_GET['msg']) && array_key_exists($_GET['msg'], $messages)) {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Request access | MyBackup for WordPress</title>
+    <title>Request access | Backup4WP</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link href="mbr.css" rel="stylesheet">
   </head>
@@ -32,7 +32,7 @@ if (isset($_GET['msg']) && array_key_exists($_GET['msg'], $messages)) {
     <?php echo mb_navigation('login'); ?>
     <div class="container outwrapper">
       <div class="starter-template">
-        <h1>MyBackup <small>Login</small></h1>
+        <h1>Backup4WP <small>Login</small></h1>
         <p class="lead">Enter below the email address you've entered via the "Options" page.<br><strong>Tip!</strong> It's often your WordPress admin email address.</p>
         <div id="msg" class="<?php echo $alert_css; ?>" role="alert"><?php echo $msg; ?></div>
 		<div class="settings-container">

@@ -8,9 +8,8 @@ deny from all
 allow from '.$_SERVER['REMOTE_ADDR'];
 
 $savePath = MYBACKUPDIR.'.htaccess';
-$oldPasswdPath = MYBACKUPDIR.'.htpasswd';
 
-if (file_exists($oldPasswdPath)) unlink($oldPasswdPath);
+if (file_exists($savePath)) die('exists');
 
 $handle = fopen($savePath, 'w+');
 if (fwrite($handle, $str) === FALSE) {

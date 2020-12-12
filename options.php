@@ -71,7 +71,7 @@ if ($required) {
 	$checked['mail'] = ($emailtype == 'mail') ? 'checked' : '';
 	$checked['smtp'] = ($emailtype == 'smtp') ? 'checked' : '';
 	$checked['sendgrid'] = ($emailtype == 'sendgrid') ? 'checked' : '';
-	
+
 }
 ?>
 <!DOCTYPE html>
@@ -80,7 +80,7 @@ if ($required) {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Options | MyBackup for WordPress</title>
+    <title>Options | Backup4WP</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link href="mbr.css" rel="stylesheet">
   </head>
@@ -88,11 +88,11 @@ if ($required) {
     <?php echo mb_navigation('options'); ?>
     <div class="container outwrapper">
       <div class="starter-template">
-        <h1>MyBackup <small>Options</small></h1>
-        <p class="lead">You can send the authentication emails via Sendrid, a SMTP server or the native PHP mail() function. </p>
+        <h1>Backup4WP <small>Options</small></h1>
+        <p class="lead">You can send the authentication emails via Sendrid, a SMTP server or the native PHP mail() function. Or you can use the <a href="setup-apache-authentication.php">IP based or login/password authentication</a> (for Apache based web servers)</p>
         <div id="msg" class="<?php echo $alert_css; ?>" role="alert"><?php echo $msg; ?></div>
-        
-        
+
+
         <?php if ($required) { ?>
 		<div class="settings-container">
 			<form class="form" id="optionform">
@@ -128,7 +128,7 @@ if ($required) {
 				  <div class="form-group">
 					<label for="sendgridapi">Sendgrid API key</label>
 					  <input type="text" class="form-control" id="sendgridapi" name="sendgridapi" value="<?php echo $sendgridapi; ?>">
-					  
+
 				  </div>
 			  </div>
 			  <div class="send-options" id="use-smtp">
@@ -155,7 +155,7 @@ if ($required) {
 					  </div>
 				  </div>
 
-				  
+
 				  <div class="form-group row">
 					  <div class="col-md-6">
 						<label for="smtplogin">SMTP login</label>
@@ -171,14 +171,14 @@ if ($required) {
 				  <h2>PHP mail()</h2>
 				  <p><strong>Sending emails via the PHP's mail() function is not recommended.</strong> There are no options to configure...</p>
 			  </div>
-			  
-			  
-			 
+
+
+
 			  <div class="text-right">
 				  <button type="button" class="btn btn-primary" id="saveoptions">Save options</button>
 			  </div>
 			</form>
-        </div>  
+        </div>
 		<?php } // required ?>
       </div>
 
@@ -188,12 +188,12 @@ if ($required) {
 	<script>
 
 	jQuery(document).ready(function($) {
-		
+
 		var curr_type = $("input[name='emailtype']:checked").val();
         if (curr_type) {
 			$("#use-" + curr_type).show();
 		}
-		
+
 		$("[name=emailtype]").click(function(){
 			$('.send-options').hide();
 			$("#use-" + $(this).val()).show();
@@ -203,7 +203,7 @@ if ($required) {
 			$('#msg').removeClass('alert-warning alert-success alert-danger alert').html('');
 			var emailfrom = $('#emailfrom').val();
 			var adminemail = $('#adminemail').val();
-			
+
             if (!adminemail || !emailfrom) {
                 $('#msg').addClass('alert alert-warning').html('Both email addresses are required.');
                 return false;
