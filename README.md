@@ -18,6 +18,7 @@ If your web host is based on Apache, the is an option to protect the directory u
 
 ## Features
 * Super fast, a backup from a 500MB website takes only seconds!
+* NEW! Download your backups and use the ZIP file for the site import in Local (by Flywheel)
 * Quick setup, using email credentials from existing plugins like WP Mail SMTP or Sendgrid
 * Apache user can authenticate via login/password or IP address
 * Backup with a single mouse click (full or partly backups)
@@ -60,6 +61,9 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 
 
 ## Update notes
+
+*30th January 2021*
+The directory structure for single backup is changed. The site files are stored in a separate directory now. **Remove old backups before you update to the latest version of Backup4WP. The restore function will not work with old backups.** Beside the new directory structure, we added a new feature: Downloads. Now you can download your entire backup as one ZIP file. The structure of the ZIP file is compatible with the site import function in Local (by Flywheel).
 
 *12th December 2020*
 Some users doesn't like the authorization via the magic link. That's the reason that we've placed the "old" Apache authorization method back to the backup tool. If you enable the Apache authorization option, the email based method isn't used anymore.
