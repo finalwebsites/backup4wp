@@ -14,15 +14,14 @@ if (!empty($_POST['backupid'])) {
 		$res = $sth->execute();
 		$result = $res->fetchArray();
 		$excl = unserialize($result['excludedata']);
-		$excl_str = ($result['backuptype'] == 'full') ? '--exclude mybackup --exclude database.sql' : '';
-		if (count($excl) > 0) {
+		$excl_str = ($result['backuptype'] == 'full') ? "--exclude 'mybackup'" : "";		if (count($excl) > 0) {
 			foreach ($excl as $dir) {
 				$pathpart = ($result['backuptype'] == 'part') ? $dir : 'wp-content/'.$dir;
 				$excl_str .= ' --exclude '.$pathpart;
 			}
 		}
 		$restore_targ = ($result['backuptype'] == 'part') ? ABSPATH.'wp-content/' : ABSPATH;
-		$restore_src = ($result['backuptype'] == 'part') ? DATAPATH.$result['dirname'].'/wp-content/' : DATAPATH.$result['dirname'].'/';
+		$restore_src = ($result['backuptype'] == 'part') ? DATAPATH.$result['dirname'].'/files/wp-content/' : DATAPATH.$result['dirname'].'/files/';
 		$restore = sprintf('rsync -a --delete-after %s %s %s 2>&1', $excl_str, $restore_src, $restore_targ);
 		$restresp = shell_exec($restore);
 		if ($restresp != '') die('An error occured while restoring the files.');

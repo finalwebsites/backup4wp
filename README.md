@@ -50,9 +50,9 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
     	}
     	curl_close ($ch);
     	if ($success = file_put_contents('master.zip', $result)) {
-    		echo 'Downloaded zip file ('.$success.' bytes)';
     		exec('unzip master.zip && mv backup4wp-master mybackup');
     		unlink('master.zip');
+            echo 'Downloaded and extracted zip file ('.$success.' bytes)';
     	} else {
     		echo 'Error while downloading zip file';
     	}
