@@ -3,7 +3,7 @@
 You know the problem, you've created a backup for your website using a WordPress backup plugin and your WordPress website breaks after an update. Next you can't restore your website to the previous version because you can't access the WP dashboard anymore.
 Using this backup tool you're able to create a backup outside WordPress. Access the tool again if you need to restore the website. We use the tool to create backups if we install a new theme / plugin or before we do some (smaller) updates.
 
-> Are you looking for the Backup4WP WordPress plugin? The WordPress plugin review team decided to decline our submission. They think that the plugin's concept doesn't follow the rules for a listing in the repository. We accept their decision and and removed the plugin here from Github as well. 
+> Are you looking for the Backup4WP WordPress plugin? The WordPress plugin review team decided to decline our submission. They think that the plugin's concept doesn't follow the rules for a listing in the repository. We accept their decision and and removed the plugin here from Github as well.
 
 ### How does it work?
 The backup tool makes a copy from your WordPress website and stores the files in a directory outside the public directory. A database dump is also stored in the same directory. During the restore function the files from the backup are moved back to the original location. The database dump is used to restore the database as well.
@@ -38,7 +38,7 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
     <?php
     $dir = dirname(dirname(dirname(__DIR__))).'/mybackup';
     if (file_exists($dir)) {
-    	echo 'The MyBackup tool already exists!';
+    	echo 'A mybackup directory already exists!';
     } else {
     	$url = 'https://github.com/finalwebsites/backup4wp/archive/master.zip';
     	$ch = curl_init($url);

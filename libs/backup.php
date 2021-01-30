@@ -7,9 +7,8 @@ if (false == check_cookie()) {
 
 $excludes_options = array('cache', 'uploads', 'themes', 'plugins');
 
-
 /** TODO **/
-// Exlcude hidden files, wp-config.php ???
+// Exlcude hidden files, wp-config.php
 
 if (isset($_POST['Submitform'])) {
 	$type = ($_POST['typebackup'] == 'full') ? 'full' : 'part';
@@ -25,7 +24,7 @@ if (isset($_POST['Submitform'])) {
 		$partbackup = true;
 	}
 	mkdir($backup_targ, 0755, true);
-	$excl_str = " --exclude '*.zip' --exclude '*.wpress' --exclude 'backup4wp'";
+	$excl_str = " --exclude '*.zip' --exclude '*.wpress' --exclude 'mybackup'";
 	$excl_array = array();
 	if (!empty($_POST['exclude'])) {
 		$info .= 'Excl. ';
@@ -39,7 +38,7 @@ if (isset($_POST['Submitform'])) {
 	}
 	$database = 0;
 	if (empty($_POST['excldb'])) {
-		$conn = get_db_conn_vals();
+		$conn = get_db_conn_vals(ABSPATH);
 
 		if (isset($conn['DB_NAME'], $conn['DB_USER'], $conn['DB_PASSWORD'])) {
 			$database = 1;
@@ -50,9 +49,8 @@ if (isset($_POST['Submitform'])) {
 		}
 	}
 	$sync = sprintf('rsync -av %s %s %s', $excl_str, $backup_src, $backup_targ);
-	$restresp = shell_exec($sync);
+	exec($sync);
 	$dirsize = dirSize(DATAPATH.$dirname);
-	$db_valid = false;
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
 		$stmt = $db->prepare("INSERT INTO wpbackups (dirname, dirsize, insertdate, excludedata, backuptype, database, description) VALUES (:dirname, :dirsize, :insertdate, :excludedata, :backuptype, :database, :description)");
 		$stmt->bindValue(':dirname', $dirname, SQLITE3_TEXT);
@@ -62,11 +60,8 @@ if (isset($_POST['Submitform'])) {
 		$stmt->bindValue(':backuptype', $type, SQLITE3_TEXT);
 		$stmt->bindValue(':database', $database, SQLITE3_INTEGER);
 		$stmt->bindValue(':description', $description, SQLITE3_TEXT);
-		$db_valid = $stmt->execute();
-	}
-	if ($restresp == '') {
-		die('An error occured during the file backup.');
-	} else {
-		echo ($db_valid) ? 'okay' : 'Database execution error, try again';
+		if ($stmt->execute()) {
+			echo 'okay';
+		}
 	}
 }
