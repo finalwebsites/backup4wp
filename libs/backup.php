@@ -6,9 +6,10 @@ if (false == check_cookie()) {
 }
 
 $excludes_options = array('cache', 'uploads', 'themes', 'plugins');
- 
+
+
 /** TODO **/
-// Exlcude hidden files, wp-config.php
+// Exlcude hidden files, wp-config.php ???
 
 if (isset($_POST['Submitform'])) {
 	$type = ($_POST['typebackup'] == 'full') ? 'full' : 'part';
@@ -17,28 +18,28 @@ if (isset($_POST['Submitform'])) {
 	$partbackup = false;
 	if ($type == 'full') {
 		$backup_src = ABSPATH;
-		$backup_targ = DATAPATH.$dirname;
+		$backup_targ = DATAPATH.$dirname.'/files/';
 	} else {
 		$backup_src = ABSPATH.'wp-content/';
-		$backup_targ = DATAPATH.$dirname.'/wp-content';
+		$backup_targ = DATAPATH.$dirname.'/files/wp-content';
 		$partbackup = true;
 	}
 	mkdir($backup_targ, 0755, true);
-	$excl_str = '';
+	$excl_str = " --exclude '*.zip' --exclude '*.wpress' --exclude 'backup4wp'";
 	$excl_array = array();
 	if (!empty($_POST['exclude'])) {
 		$info .= 'Excl. ';
 		foreach ($_POST['exclude'] as $excl) {
 			if (in_array($excl, $excludes_options)) {
 				$pathpart = ($partbackup) ? $excl : 'wp-content/'.$excl;
-				$excl_str .= ' --exclude \'*.zip\' --exclude '.$pathpart;
+				$excl_str .= ' --exclude '.$pathpart;
 				$excl_array[] = $excl;
 			}
 		}
 	}
 	$database = 0;
 	if (empty($_POST['excldb'])) {
-		$conn = get_db_conn_vals(ABSPATH);
+		$conn = get_db_conn_vals();
 
 		if (isset($conn['DB_NAME'], $conn['DB_USER'], $conn['DB_PASSWORD'])) {
 			$database = 1;
@@ -48,9 +49,10 @@ if (isset($_POST['Submitform'])) {
 			$dump->start(DATAPATH.$dirname.'/database.sql');
 		}
 	}
-	$sync = sprintf('rsync -av --exclude mybackup%s %s %s', $excl_str, $backup_src, $backup_targ);
-	exec($sync);
+	$sync = sprintf('rsync -av %s %s %s', $excl_str, $backup_src, $backup_targ);
+	$restresp = shell_exec($sync);
 	$dirsize = dirSize(DATAPATH.$dirname);
+	$db_valid = false;
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
 		$stmt = $db->prepare("INSERT INTO wpbackups (dirname, dirsize, insertdate, excludedata, backuptype, database, description) VALUES (:dirname, :dirsize, :insertdate, :excludedata, :backuptype, :database, :description)");
 		$stmt->bindValue(':dirname', $dirname, SQLITE3_TEXT);
@@ -60,8 +62,11 @@ if (isset($_POST['Submitform'])) {
 		$stmt->bindValue(':backuptype', $type, SQLITE3_TEXT);
 		$stmt->bindValue(':database', $database, SQLITE3_INTEGER);
 		$stmt->bindValue(':description', $description, SQLITE3_TEXT);
-		if ($stmt->execute()) {
-			echo 'okay';
-		}
+		$db_valid = $stmt->execute();
+	}
+	if ($restresp == '') {
+		die('An error occured during the file backup.');
+	} else {
+		echo ($db_valid) ? 'okay' : 'Database execution error, try again';
 	}
 }
