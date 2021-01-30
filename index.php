@@ -99,7 +99,7 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
 				  <td>'.$details.'<br><em>'.$res['description'].'</em></td>
 				  <td>'.filesizeConvert($res['dirsize']).'</td>
 				  <td>'.date('d-m-Y H:i:s', $res['insertdate']).'</td>
-				  <td><a href="download.php?dlid='.$res['id'].'" class="btn btn-default btn-xs">Download</a></td>
+				  <td><a href="javascript:void(0);" class="btn btn-default btn-xs download">Download</a></td>
 				  <td><a href="javascript:void(0);" class="btn btn-warning btn-xs restore">Restore</a></td>
 				  <td><a href="javascript:void(0);" class="btn btn-danger btn-xs delete">Delete</a></td>
 				</tr>';
@@ -179,12 +179,13 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
 			});
 			e.preventDefault();
 		});
-        /*
 		$('.download').click(function(e) {
-			alert('Not available, maybe in the next release.');
 			e.preventDefault();
+			var id = $(this).closest('tr').attr('id');
+			$(this).attr("disabled", true);
+			$('#msg').addClass('alert alert-info').html('Please wait until the download is done. <a href="index.php">Click here</a> to refresh the backup list.');
+			window.location.href = 'download.php?dlid=' + id;
 		});
-        */
 	});
 
     </script>

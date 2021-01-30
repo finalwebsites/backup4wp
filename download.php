@@ -11,14 +11,15 @@ if (!empty($_GET['dlid'])) {
 		$res = $sth->execute();
 		if ($result = $res->fetchArray()) {
 			$archive_file_name = $result['dirname'].'.zip';
-			$str = sprintf('zip -r %s %s', $archive_file_name, $result['dirname']);
+            $archive_path = DATAPATH.$result['dirname'].'/';
+			$str = sprintf('cd ../../backups/ && zip -r %s %s', $archive_path.$archive_file_name, $result['dirname']);
 			exec($str);
 			header("Content-type: application/zip");
 			header("Content-Disposition: attachment; filename=" . $archive_file_name);
-			header("Content-length: " . filesize($archive_file_name));
+			header("Content-length: " . filesize($archive_path.$archive_file_name));
 			header("Pragma: no-cache");
 			header("Expires: 0");
-			readfile($archive_file_name);
+			readfile($archive_path.$archive_file_name);
 			exit;
 		} else {
 			// show some error
