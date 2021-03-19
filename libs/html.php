@@ -27,8 +27,8 @@ function mb_navigation($current = '') {
             <li';
         if($key == $current) $html .= ' class="active"';
         $html .= '><a href="'.$page['url'].'"';
-        if ($page['target']) $html .= ' target="'.$page['target'].'"';
-        if ($page['class']) $html .= ' class="'.$page['class'].'"';
+		if (isset($page['target'])) $html .= ' target="'.$page['target'].'"';
+        if (isset($page['class'])) $html .= ' class="'.$page['class'].'"';
         $html .= '>'.$page['label'].'</a></li>';
     }
     $html .= '
