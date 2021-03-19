@@ -26,6 +26,7 @@ if (isset($_POST['Submitform'])) {
 	mkdir($backup_targ, 0755, true);
 	$excl_str = " --exclude '*.zip' --exclude '*.wpress' --exclude 'mybackup'";
 	$excl_array = array();
+	$info = '';
 	if (!empty($_POST['exclude'])) {
 		$info .= 'Excl. ';
 		foreach ($_POST['exclude'] as $excl) {
