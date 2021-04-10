@@ -57,7 +57,7 @@ if ($required) {
 	if ($res['lastupdate'] == '') {
 		$sendgridapi = $sendgrid_api_key;
 		$adminemail = $admin_email;
-		if ($wp_mail_smtp) $smtp = unserialize($wp_mail_smtp);
+		if (!empty($wp_mail_smtp)) $smtp = unserialize($wp_mail_smtp);
 		if ($sendgridapi == '' && !empty($smtp['sendgrid']['api_key'])) $sendgridapi  = $smtp['sendgrid']['api_key'];
 		if (!empty($smtp['mail']['from_email'])) $emailfrom  = $smtp['mail']['from_email'];
 		if (!empty($smtp['smtp']['host'])) $smtpserver  = $smtp['smtp']['host'];

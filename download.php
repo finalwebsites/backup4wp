@@ -11,7 +11,7 @@ if (!empty($_GET['dlid'])) {
 		$res = $sth->execute();
 		if ($result = $res->fetchArray()) {
 			$archive_file_name = $result['dirname'].'.zip';
-            $archive_path = DATAPATH.$result['dirname'].'/';
+			$archive_path = DATAPATH.$result['dirname'].'/';
 			$str = sprintf('cd ../../backups/ && zip -r %s %s', $archive_path.$archive_file_name, $result['dirname']);
 			exec($str);
 			header("Content-type: application/zip");
