@@ -163,7 +163,7 @@ function get_authorized() {
 						header('Location: '.$home.'login.php?msg=invalidsession');
 						exit;
 					} else {
-						setcookie("mybackup_access", $matches[0], time()+(3600*4), "/mybackup/", $_SERVER['HTTP_HOST'], true);
+						setcookie("mybackup_access", $matches[0], time()+(3600*4), "/mybackup/", $_SERVER['HTTP_HOST']);
 						$confirmed = $db->querySingle("SELECT confirmed FROM backupsettings WHERE id = 1");
 						if ($confirmed == 'no') {
 							$db->exec("UPDATE backupsettings SET confirmed = 'yes' WHERE id = 1");
@@ -181,7 +181,7 @@ function get_authorized() {
 			}
 		} else {
 			if ($cookie = check_cookie()) {
-				setcookie("mybackup_access", $cookie, time()+(3600*4), "/mybackup/", $_SERVER['HTTP_HOST'], true);
+				setcookie("mybackup_access", $cookie, time()+(3600*4), "/mybackup/", $_SERVER['HTTP_HOST']);
 			} else {
 				header('Location: '.$home.'login.php?msg=cookieexpired');
 				exit;
