@@ -22,6 +22,6 @@ if (!empty($_POST['mailto'])) {
 		} else {
 			echo 'Error: '.$db->lastErrorMsg;
 		}
-		$db->close;
+		$db->close();
 	}
 }
