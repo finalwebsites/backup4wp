@@ -5,7 +5,7 @@ define('ABSPATH', dirname(MYBACKUPDIR).'/');
 define('DATAPATH', dirname(dirname(MYBACKUPDIR)).'/backups/');
 define('BASE_URL', '//'.$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']).'/');
 
-
+ini_set('max_execution_time', '120');
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
