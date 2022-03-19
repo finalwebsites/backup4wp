@@ -215,7 +215,7 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 		if ($result['emailtype'] == 'sendgrid') {
 
 			$email = new \SendGrid\Mail\Mail();
-			$email->setFrom($result['emailfrom'], 'MyBackup for WordPress');
+			$email->setFrom($result['emailfrom'], $_SERVER['HTTP_HOST']);
 			$email->setSubject($subject);
 			$email->addTo($to);
 			$email->addContent("text/plain", strip_tags($msg));
@@ -243,7 +243,7 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 				$mail->Password = $result['smtppassword'];
 				$mail->SMTPSecure = $result['smtpsecure'];
 				$mail->Port = $result['smtpport'];
-				$mail->setFrom($result['emailfrom'], 'MyBackup for WordPress');
+				$mail->setFrom($result['emailfrom'], $_SERVER['HTTP_HOST']);
 				$mail->addAddress($to);
 				$mail->isHTML(true);
 				$mail->Subject = $subject;
