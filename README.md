@@ -3,7 +3,7 @@
 You know the problem, you've created a backup for your website using a WordPress backup plugin and your WordPress website breaks after an update. Next you can't restore your website to the previous version because you can't access the WP dashboard anymore.
 Using this backup tool you're able to create a backup outside WordPress. Access the tool again if you need to restore the website. We use the tool to create backups if we install a new theme / plugin or before we do some (smaller) updates.
 
-> Are you looking for the Backup4WP WordPress plugin? The WordPress plugin review team decided to decline our submission. They think that the plugin's concept doesn't follow the rules for a listing in the repository. We accept their decision and and removed the plugin here from Github as well.
+> Are you looking for the Backup4WP WordPress plugin? The WordPress plugin review team decided to decline our submission. They think that the plugin's concept doesn't follow the rules for a listing in the repository. We accept their decision and removed the plugin here from Github as well.
 
 ### How does it work?
 The backup tool makes a copy from your WordPress website and stores the files in a directory outside the public directory. A database dump is also stored in the same directory. During the restore function the files from the backup are moved back to the original location. The database dump is used to restore the database as well.
@@ -61,6 +61,12 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 
 
 ## Update notes
+
+*3rd April 2022*
+If you like to download your backups, it's necessary now to set the constant variable to "true" inside the file "func.php". Most people doesn't need the download feature. This modification is temproray solution until we find a better way to do this on the options page.
+
+*19th March 2022*
+The email sender name is now the domain name. That makes it easier to recognize the email message in your inbox if you use the Backup4WP tool for multiple websites.
 
 *30th January 2021*
 The directory structure for single backup is changed. The site files are stored in a separate directory now. **Remove old backups before you update to the latest version of Backup4WP. The restore function will not work with old backups.** Beside the new directory structure, we added a new feature: Downloads. Now you can download your entire backup as one ZIP file. The structure of the ZIP file is compatible with the site import function in Local (by Flywheel).

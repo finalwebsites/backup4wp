@@ -93,13 +93,14 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
 				} else {
 					$details .= 'none';
 				}
+				$enable_dlds = (ENABLE_DOWNLOADS) ? '' : ' disabled="disabled"';
 				$tablehtml .= '
 				<tr id="'.$res['id'].'">
 				  <th scope="row">'.$i.'</th>
 				  <td>'.$details.'<br><em>'.$res['description'].'</em></td>
 				  <td>'.filesizeConvert($res['dirsize']).'</td>
 				  <td>'.date('d-m-Y H:i:s', $res['insertdate']).'</td>
-				  <td><a href="javascript:void(0);" class="btn btn-default btn-xs download">Download</a></td>
+				  <td><a href="javascript:void(0);" class="btn btn-default btn-xs download" '.$enable_dlds.'>Download</a></td>
 				  <td><a href="javascript:void(0);" class="btn btn-warning btn-xs restore">Restore</a></td>
 				  <td><a href="javascript:void(0);" class="btn btn-danger btn-xs delete">Delete</a></td>
 				</tr>';
