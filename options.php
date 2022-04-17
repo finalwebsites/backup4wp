@@ -23,7 +23,7 @@ $sendgrid_api_key = '';
 
 $wp_db = get_db_conn_vals(ABSPATH);
 if ($db = mysqli_connect($wp_db['DB_HOST'], $wp_db['DB_USER'], $wp_db['DB_PASSWORD'], $wp_db['DB_NAME'])) {
-    $sql = sprintf("SELECT option_name, option_value FROM %soptions WHERE option_name IN ('admin_email', 'sendgrid_api_key', 'wp_mail_smtp') AND option_value != ''", $wp_db['DB_PREFIX']);
+    $sql = sprintf("SELECT option_name, option_value FROM %soptions WHERE option_name IN ('admin_email', 'sendgrid_api_key', 'wp_mail_smtp', 'swpsmtp_options') AND option_value != ''", $wp_db['DB_PREFIX']);
     if ($result = mysqli_query($db, $sql)) {
 		while( $obj = mysqli_fetch_object( $result) ) {
 			$name = $obj->option_name;
@@ -57,6 +57,18 @@ if ($required) {
 	if ($res['lastupdate'] == '') {
 		$sendgridapi = $sendgrid_api_key;
 		$adminemail = $admin_email;
+		if (!empty($swpsmtp_options)) {
+			$options = unserialize($swpsmtp_options);
+			if ($options['host'] == '' && $options['username'] == 'apikey') {
+				$sendgridapi = $options['password'];
+			} else {
+				$smtpserver = $options['host'];
+				$smtpport = $options['port'];
+				$smtplogin = $options['username'];
+				$smtppassword = $options['password'];
+				$smtpsecure = $options['type_encryption'];
+			}
+		}
 		if (!empty($wp_mail_smtp)) $smtp = unserialize($wp_mail_smtp);
 		if ($sendgridapi == '' && !empty($smtp['sendgrid']['api_key'])) $sendgridapi  = $smtp['sendgrid']['api_key'];
 		if (!empty($smtp['mail']['from_email'])) $emailfrom  = $smtp['mail']['from_email'];
