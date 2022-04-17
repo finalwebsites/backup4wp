@@ -55,28 +55,29 @@ if ($required) {
 	$smtpsecure = $res['smtpsecure'];
 	$emailtype = $res['emailtype'];
 	if ($res['lastupdate'] == '') {
-		$sendgridapi = $sendgrid_api_key;
+		$sendgridapi = $sendgrid_api_key; // API key setting from old Sendgrid plugin
 		$adminemail = $admin_email;
-		if (!empty($swpsmtp_options)) {
+		if (!empty($swpsmtp_options)) { // read options from Easy SMTP
 			$options = unserialize($swpsmtp_options);
-			if ($options['host'] == '' && $options['username'] == 'apikey') {
+			if ($options['smtp_settings']['host'] == '' && $options['smtp_settings']['username'] == 'apikey') {
 				$sendgridapi = $options['password'];
-			} else {
-				$smtpserver = $options['host'];
-				$smtpport = $options['port'];
-				$smtplogin = $options['username'];
-				$smtppassword = $options['password'];
-				$smtpsecure = $options['type_encryption'];
 			}
+			$emailfrom  = $options['from_email_field'];
+			$smtpserver = $options['smtp_settings']['host'];
+			$smtpport = $options['smtp_settings']['port'];
+			$smtplogin = $options['smtp_settings']['username'];
+			$smtppassword = $options['smtp_settings']['password'];
+			$smtpsecure = $options['smtp_settings']['type_encryption'];
+		} elseif (!empty($wp_mail_smtp)) { // read options from WP Mail SMTP
+			$smtp = unserialize($wp_mail_smtp);
+			if (!empty($smtp['sendgrid']['api_key'])) $sendgridapi  = $smtp['sendgrid']['api_key'];
+			if (!empty($smtp['mail']['from_email'])) $emailfrom  = $smtp['mail']['from_email'];
+			if (!empty($smtp['smtp']['host'])) $smtpserver  = $smtp['smtp']['host'];
+			if (!empty($smtp['smtp']['port'])) $smtpport  = $smtp['smtp']['port'];
+			if (!empty($smtp['smtp']['user'])) $smtplogin  = $smtp['smtp']['user'];
+			if (!empty($smtp['smtp']['pass'])) $smtppassword  = $smtp['smtp']['pass'];
+			if (!empty($smtp['smtp']['encryption'])) $smtpsecure  = $smtp['smtp']['encryption'];
 		}
-		if (!empty($wp_mail_smtp)) $smtp = unserialize($wp_mail_smtp);
-		if ($sendgridapi == '' && !empty($smtp['sendgrid']['api_key'])) $sendgridapi  = $smtp['sendgrid']['api_key'];
-		if (!empty($smtp['mail']['from_email'])) $emailfrom  = $smtp['mail']['from_email'];
-		if (!empty($smtp['smtp']['host'])) $smtpserver  = $smtp['smtp']['host'];
-		if (!empty($smtp['smtp']['port'])) $smtpport  = $smtp['smtp']['port'];
-		if (!empty($smtp['smtp']['user'])) $smtplogin  = $smtp['smtp']['user'];
-		if (!empty($smtp['smtp']['pass'])) $smtppassword  = $smtp['smtp']['pass'];
-		if (!empty($smtp['smtp']['encryption'])) $smtpsecure  = $smtp['smtp']['encryption'];
 	}
 	$checked['tls'] = ($smtpsecure == 'tls') ? 'checked' : '';
 	$checked['ssl'] = ($smtpsecure == 'ssl') ? 'checked' : '';

@@ -63,7 +63,7 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 ## Update notes
 
 *17th April 2022*
-If your WordPress website is using the <strong>Easy SMTP plugin</strong>, Backup4WP will recognize these settings too. Plus, if you use an API key from Sendgrid as a password for this SMTP plugin, the API key is also pre-filled inside the "Sendgrid" tab.   
+If your WordPress website is using the <strong>Easy SMTP plugin</strong>, Backup4WP will recognize these settings too. Plus, if you use an API key from Sendgrid as a password for this SMTP plugin, the API key is also pre-filled inside the "Sendgrid" section.   
 
 *3rd April 2022*
 If you like to download your backups, it's necessary now to set the constant variable to "true" inside the file "func.php". Most people doesn't need the download feature. This modification is temproray solution until we find a better way to do this on the options page.
