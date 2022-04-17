@@ -18,8 +18,8 @@ If your web host is based on Apache, the is an option to protect the directory u
 
 ## Features
 * Super fast, a backup from a 500MB website takes only seconds!
-* NEW! Download your backups and use the ZIP file for the site import in Local (by Flywheel)
-* Quick setup, using email credentials from existing plugins like WP Mail SMTP or Sendgrid
+* NEW (optional)! Download your backups and use the ZIP file for the site import in Local (by Flywheel)
+* Quick setup, using email credentials from existing plugins like Easy SMTP, WP Mail SMTP or Sendgrid
 * Apache user can authenticate via login/password or IP address
 * Backup with a single mouse click (full or partly backups)
 * Exclude themes, plugins or media files
@@ -30,7 +30,7 @@ If your web host is based on Apache, the is an option to protect the directory u
 ## Installation
 
 Download the files as a zip or via the GIT tools on your server. Place/upload the files into a directory named "mybackup" and place it into the website's public folder. Access the tool and enter your email address and enter your Sendgrid API key or your SMTP credentials. Confirm your email address via the link you get in your mailbox.
-If you like to use the authorization feature provided by Apache, than continue to "Apache authentication" and enter your details on that page.
+If you like to use the authorization feature provided by Apache, than continue to "Apache authentication" and enter your details on that page. If you need the "Download" opttion for your backups, you need to change the variable ENABLE_DOWNLOADS to "true" inside the file *libs > func.php*.
 
 ### Installation snippet for ManageWP users
 
@@ -63,7 +63,7 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 ## Update notes
 
 *17th April 2022*
-If your WordPress website is using the <strong>Easy SMTP plugin</strong>, Backup4WP will recognize these settings too. Plus, if you use an API key from Sendgrid as a password for this SMTP plugin, the API key is also pre-filled inside the "Sendgrid" section.   
+If your WordPress website is using the **Easy SMTP plugin**, Backup4WP will recognize these settings too. Plus, if you use an API key from Sendgrid as a password for this SMTP plugin, the API key is also pre-filled inside the "Sendgrid" section. We changed also the order on how the obtained settings are used: 1. Easy SMTP, 2. WP Mail SMTP and 3. the old Sendgrid plugin.
 
 *3rd April 2022*
 If you like to download your backups, it's necessary now to set the constant variable to "true" inside the file "func.php". Most people doesn't need the download feature. This modification is temproray solution until we find a better way to do this on the options page.

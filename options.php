@@ -55,7 +55,6 @@ if ($required) {
 	$smtpsecure = $res['smtpsecure'];
 	$emailtype = $res['emailtype'];
 	if ($res['lastupdate'] == '') {
-		$sendgridapi = $sendgrid_api_key; // API key setting from old Sendgrid plugin
 		$adminemail = $admin_email;
 		if (!empty($swpsmtp_options)) { // read options from Easy SMTP
 			$options = unserialize($swpsmtp_options);
@@ -77,6 +76,8 @@ if ($required) {
 			if (!empty($smtp['smtp']['user'])) $smtplogin  = $smtp['smtp']['user'];
 			if (!empty($smtp['smtp']['pass'])) $smtppassword  = $smtp['smtp']['pass'];
 			if (!empty($smtp['smtp']['encryption'])) $smtpsecure  = $smtp['smtp']['encryption'];
+		} elseif (!empty($sendgrid_api_key)) { // API key setting from old Sendgrid plugin
+			$sendgridapi = $sendgrid_api_key;
 		}
 	}
 	$checked['tls'] = ($smtpsecure == 'tls') ? 'checked' : '';
