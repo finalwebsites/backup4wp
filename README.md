@@ -84,7 +84,3 @@ We changed the options page that users can use their SMTP server credentials now
 * [Mysqldump by Diego Torres](https://github.com/ifsnop/mysqldump-php)
 * [PHP library for the Sendgrid API v3](https://github.com/sendgrid/sendgrid-php/)
 * [PHPMailer - The classic email sending library for PHP](https://github.com/PHPMailer/PHPMailer)
-
-## Disclaimer
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
