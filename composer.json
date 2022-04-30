@@ -1,19 +1,17 @@
 {
-  "name": "finalwebsites/backup4wp",
-  "description": "Backup & Restore for WordPress",
-  "license": "MIT",
-  "keywords": [
-    "wordpress",
-    "backup",
-    "restore"
-  ],
-  "authors": {
-      "name": "Olaf Lederer",
-      "email": "olaf@finalwebsites.com"
-  },
-  "require": {
-    "sendgrid/sendgrid-php": "^7.5",
-    "PHPMailer/PHPMailer": "^5.5",
-    "ifsnop/mysqldump-php": "^2.9"
-  }
+    "name": "finalwebsites/backup4wp",
+    "description": "Backup & Restore for WordPress",
+    "type": "project",
+    "require": {
+        "sendgrid/sendgrid-php": "^7.5",
+        "PHPMailer/PHPMailer": "^5.5",
+        "ifsnop/mysqldump-php": "^2.9"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Olaf Lederer",
+            "email": "olaf@finalwebsites.com"
+        }
+    ]
 }
