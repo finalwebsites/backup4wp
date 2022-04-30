@@ -4,7 +4,7 @@
     "type": "project",
     "require": {
         "sendgrid/sendgrid-php": "^7.5",
-        "PHPMailer/PHPMailer": "^5.5",
+        "phpmailer/phpmailer": "^5.5",
         "ifsnop/mysqldump-php": "^2.9"
     },
     "license": "MIT",
