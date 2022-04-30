@@ -3,7 +3,7 @@
     "description": "Backup & Restore for WordPress",
     "type": "project",
     "require": {
-        "sendgrid/sendgrid-php": "^7.5",
+        "sendgrid/sendgrid": "^7.5",
         "phpmailer/phpmailer": "^5.5",
         "ifsnop/mysqldump-php": "^2.9"
     },
