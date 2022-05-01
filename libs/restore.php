@@ -14,7 +14,7 @@ if (!empty($_POST['backupid'])) {
 		$res = $sth->execute();
 		$result = $res->fetchArray();
 		$excl = unserialize($result['excludedata']);
-		$excl_str = ($result['backuptype'] == 'full') ? "--exclude 'mybackup'" : "";		if (count($excl) > 0) {
+		$excl_str = ($result['backuptype'] == 'full') ? "--exclude '".trim(MBDIRNAME, '/')."'" : "";		if (count($excl) > 0) {
 			foreach ($excl as $dir) {
 				$pathpart = ($result['backuptype'] == 'part') ? $dir : 'wp-content/'.$dir;
 				$excl_str .= ' --exclude '.$pathpart;

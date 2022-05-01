@@ -1,6 +1,8 @@
 <?php
 include_once 'func.php';
-include_once 'Mysqldump.php';
+
+use Ifsnop\Mysqldump;
+
 if (false == check_cookie()) {
 	die('Unauthorized access!');
 }
@@ -24,7 +26,7 @@ if (isset($_POST['Submitform'])) {
 		$partbackup = true;
 	}
 	mkdir($backup_targ, 0755, true);
-	$excl_str = " --exclude '*.zip' --exclude '*.wpress' --exclude 'mybackup'";
+	$excl_str = " --exclude '*.zip' --exclude '*.wpress' --exclude '".trim(MBDIRNAME, '/')."'";
 	$excl_array = array();
 	$info = '';
 	if (!empty($_POST['exclude'])) {

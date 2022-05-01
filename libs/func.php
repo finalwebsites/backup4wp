@@ -1,9 +1,14 @@
 <?php
 
+
 define('MYBACKUPDIR', dirname(dirname(__FILE__)).'/');
+require_once MYBACKUPDIR.'vendor/autoload.php';
+
+
 define('ABSPATH', dirname(MYBACKUPDIR).'/');
 define('DATAPATH', dirname(dirname(MYBACKUPDIR)).'/backups/');
-define('BASE_URL', '//'.$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']).'/');
+define('MBDIRNAME', dirname($_SERVER['PHP_SELF'])); // for example /mybackup
+define('BASE_URL', '//'.$_SERVER['HTTP_HOST'].MBDIRNAME.'/');
 
 define('ENABLE_DOWNLOADS', false); // set to "true" to enable backup downnloads
 
@@ -12,11 +17,8 @@ ini_set('max_execution_time', '120');
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
-require MYBACKUPDIR . 'libs/phpmailer/Exception.php';
-require MYBACKUPDIR . 'libs/phpmailer/PHPMailer.php';
-require MYBACKUPDIR . 'libs/phpmailer/SMTP.php';
 
-require_once MYBACKUPDIR . 'libs/sendgrid/sendgrid-php.php';
+use SendGrid\Mail\Mail;
 
 // This should be the part of the install process
 if (!file_exists(DATAPATH)) {
@@ -142,11 +144,11 @@ function check_htaccess() {
 function get_authorized() {
 	if (check_htaccess()) return;
 	$home = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
-	$home .= '://'.$_SERVER['HTTP_HOST'].'/mybackup/';
+	$home .= '://'.$_SERVER['HTTP_HOST'].MBDIRNAME.'/';
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
 		$confirmed = $db->querySingle("SELECT confirmed FROM backupsettings WHERE id = 1");
 		if ($confirmed != 'yes' && empty($_GET['auth'])) {
-			if ($_SERVER['REQUEST_URI'] != '/mybackup/options.php') {
+			if ($_SERVER['REQUEST_URI'] != MBDIRNAME.'/options.php') {
 				header('Location: '.$home.'options.php');
 				exit;
 			}
@@ -165,7 +167,7 @@ function get_authorized() {
 						header('Location: '.$home.'login.php?msg=invalidsession');
 						exit;
 					} else {
-						setcookie("mybackup_access", $matches[0], time()+(3600*4), "/mybackup/", $_SERVER['HTTP_HOST']);
+						setcookie("mybackup_access", $matches[0], time()+(3600*4), .MBDIRNAME."/", $_SERVER['HTTP_HOST']);
 						$confirmed = $db->querySingle("SELECT confirmed FROM backupsettings WHERE id = 1");
 						if ($confirmed == 'no') {
 							$db->exec("UPDATE backupsettings SET confirmed = 'yes' WHERE id = 1");
@@ -183,7 +185,7 @@ function get_authorized() {
 			}
 		} else {
 			if ($cookie = check_cookie()) {
-				setcookie("mybackup_access", $cookie, time()+(3600*4), "/mybackup/", $_SERVER['HTTP_HOST']);
+				setcookie("mybackup_access", $cookie, time()+(3600*4), MBDIRNAME."/", $_SERVER['HTTP_HOST']);
 			} else {
 				header('Location: '.$home.'login.php?msg=cookieexpired');
 				exit;
@@ -195,7 +197,7 @@ function get_authorized() {
 
 function create_login_url() {
 	$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
-	$url .= '://'.$_SERVER['HTTP_HOST'].'/mybackup/?auth=';
+	$url .= '://'.$_SERVER['HTTP_HOST'].MBDIRNAME.'/?auth=';
 	$slug = md5(uniqid(rand(10000,99999), true));
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
 		$stmt = $db->prepare("INSERT INTO logins (slug, created, ipadres) VALUES (:slug, :created, :ipadres)");

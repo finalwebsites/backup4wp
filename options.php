@@ -121,7 +121,7 @@ if ($required) {
 					<input type="email" class="form-control" id="adminemail" name="adminemail" value="<?php echo $adminemail; ?>">
 				 </div>
 			    </div>
-				<p>Both email addresses are required and used to send the MyBackup authentication emails.</p>
+				<p>Both email addresses are required and used to send the Backup4WP authentication emails.</p>
 			  </div>
 			  <p>How do you like to send the authentication emails? If you switch the options, it's not necessary to empty the other fields.</p>
 			  <div class="form-group">

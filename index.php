@@ -29,7 +29,7 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
         <p class="lead">Create backups from your WordPress website and restore files if necessary.</p>
         <form role="form" id="myform">
 			<input type="hidden" name="Submitform" value="1">
-			<p>Check which directories you like to exclude from the backup. ZIP files and the "mybackup" directory are always excluded!</p>
+			<p>Check which directories you like to exclude from the backup. ZIP files and the current directory (for example "mybackup") are always excluded!</p>
 			<div class="form-group">
 				<label class="checkbox-inline">
 				<input type="checkbox" name="exclude[]" value="cache" checked>
