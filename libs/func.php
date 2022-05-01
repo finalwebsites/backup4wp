@@ -7,7 +7,7 @@ require_once MYBACKUPDIR.'vendor/autoload.php';
 
 define('ABSPATH', dirname(MYBACKUPDIR).'/');
 define('DATAPATH', dirname(dirname(MYBACKUPDIR)).'/backups/');
-define('MBDIRNAME', dirname($_SERVER['PHP_SELF'])); // for example /mybackup
+define('MBDIRNAME', '/'.basename(MYBACKUPDIR)); // for example /mybackup
 define('BASE_URL', '//'.$_SERVER['HTTP_HOST'].MBDIRNAME.'/');
 
 define('ENABLE_DOWNLOADS', false); // set to "true" to enable backup downnloads
@@ -167,7 +167,7 @@ function get_authorized() {
 						header('Location: '.$home.'login.php?msg=invalidsession');
 						exit;
 					} else {
-						setcookie("mybackup_access", $matches[0], time()+(3600*4), .MBDIRNAME."/", $_SERVER['HTTP_HOST']);
+						setcookie("mybackup_access", $matches[0], time()+(3600*4), MBDIRNAME."/", $_SERVER['HTTP_HOST']);
 						$confirmed = $db->querySingle("SELECT confirmed FROM backupsettings WHERE id = 1");
 						if ($confirmed == 'no') {
 							$db->exec("UPDATE backupsettings SET confirmed = 'yes' WHERE id = 1");

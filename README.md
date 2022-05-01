@@ -18,7 +18,7 @@ If your web host is based on Apache, the is an option to protect the directory u
 
 ## Features
 * Super fast, a backup from a 500MB website takes only seconds!
-* NEW (optional)! Download your backups and use the ZIP file for the site import in Local (by Flywheel)
+* Optional: Download your backups and use the ZIP file for the site import in Local (by Flywheel)
 * Quick setup, using email credentials from existing plugins like Easy SMTP, WP Mail SMTP or Sendgrid
 * Apache user can authenticate via login/password or IP address
 * Backup with a single mouse click (full or partly backups)
@@ -29,8 +29,19 @@ If your web host is based on Apache, the is an option to protect the directory u
 
 ## Installation
 
-Download the files as a zip or via the GIT tools on your server. Place/upload the files into a directory named "mybackup" and place it into the website's public folder. Access the tool and enter your email address and enter your Sendgrid API key or your SMTP credentials. Confirm your email address via the link you get in your mailbox.
-If you like to use the authorization feature provided by Apache, than continue to "Apache authentication" and enter your details on that page. If you need the "Download" opttion for your backups, you need to change the variable ENABLE_DOWNLOADS to "true" inside the file *libs > func.php*.
+Using Composer, just run the following code within the public HTML directory from your WordPress website:
+
+```
+composer create-project finalwebsites/backup4wp mybackup
+```
+
+Replace the directory name "mybackup" with something else, if you like.
+
+### Manual installation
+
+Download the the zip file here. Extract and upload the files into a directory named "mybackup" (or some other name) right into the website's public folder. Accesss the tool and enter your email address and enter your Sendgrid API key or your SMTP credentials. Confirm your email address via the link you get in your mailbox.
+
+If you like to use the authorization feature provided by Apache, than continue to "Apache authentication" and enter your details on that page. If you need the "Download" option for your backups, you need to change the variable ENABLE_DOWNLOADS to "true" inside the file *libs > func.php*.
 
 ### Installation snippet for ManageWP users
 
@@ -39,28 +50,22 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
     <?php
     $dir = dirname(dirname(dirname(__DIR__))).'/mybackup';
     if (file_exists($dir)) {
-    	echo 'A mybackup directory already exists!';
+    	echo 'A "mybackup" directory already exists!';
     } else {
-    	$url = 'https://github.com/finalwebsites/backup4wp/archive/master.zip';
-    	$ch = curl_init($url);
-    	curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
-    	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    	$result = curl_exec ($ch);
-    	if (curl_errno($ch)) {
-    		die('Curl error: ' . curl_error($ch));
-    	}
-    	curl_close ($ch);
-    	if ($success = file_put_contents('master.zip', $result)) {
-    		exec('unzip master.zip && mv backup4wp-master mybackup');
-    		unlink('master.zip');
-            echo 'Downloaded and extracted zip file ('.$success.' bytes)';
+        exec('composer -V', $output);
+        if (substr($output[0], 0, 8) == 'Composer') {
+    		exec('composer create-project finalwebsites/backup4wp mybackup'); // you can use a different directory name (instead of "mybackup")
+            echo 'Downloaded and installed Backup4WP using Composer';
     	} else {
-    		echo 'Error while downloading zip file';
+    		echo 'Composer isn't supported by your web host.';
     	}
     }
 
 
 ## Update notes
+
+*1st May 2022*
+First release v1.0.0, from today on we're using release tags. Do you like to use Composer? Than is this update for you. We packaged Backup4WP and you're able to install the tool using Composer. The PHPMailer, Sendgrid and Mysqldump library are not included in our distribution anymore. Don't worry for the manual installation, we offer a ZIP file with all the library files included. During the installation, you can choose the directory name. Instead of "mybackup", you can use your own name. This makes it a bit more safe if you choose a random name. From our prospective it's safe to update the application for  installations from the last year.
 
 *17th April 2022*
 If your WordPress website is using the **Easy SMTP plugin**, Backup4WP will recognize these settings too. Plus, if you use an API key from Sendgrid as a password for this SMTP plugin, the API key is also pre-filled inside the "Sendgrid" section. We changed also the order on how the obtained settings are used: 1. Easy SMTP, 2. WP Mail SMTP and 3. the old Sendgrid plugin.
