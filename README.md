@@ -57,7 +57,7 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
     		exec('composer create-project finalwebsites/backup4wp mybackup'); // you can use a different directory name (instead of "mybackup")
             echo 'Downloaded and installed Backup4WP using Composer';
     	} else {
-    		echo 'Composer isn't supported by your web host.';
+    		echo 'Composer isn\'t supported by your web host.';
     	}
     }
 
