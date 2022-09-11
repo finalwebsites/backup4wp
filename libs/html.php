@@ -6,7 +6,8 @@ function mb_navigation($current = '') {
 		'options' => array('url' => BASE_URL.'options.php', 'label' => 'Options'),
 		'home' => array('url' => '//'.$_SERVER['HTTP_HOST'], 'label' => 'Homepage'),
 		'wpadmin' => array('url' => '//'.$_SERVER['HTTP_HOST'].'/wp-admin/', 'label' => 'WP Dashboard'),
-		'help' => array('url' => 'https://backup4wp.com/getting-help/', 'label' => '<span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Getting help', 'target' => '_blank', 'class' => 'nav-highlight')
+		'help' => array('url' => 'https://backup4wp.com/getting-help/', 'label' => '<span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Getting help', 'target' => '_blank', 'class' => 'nav-highlight'),
+		'logout' => array('url' => BASE_URL.'login.php?action=logout', 'label' => 'Log Out')
 	);
 	$html = '
 	<nav class="navbar navbar-inverse navbar-fixed-top">

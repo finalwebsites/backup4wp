@@ -21,30 +21,38 @@ if (function_exists('exec')) {
 $admin_email = '';
 $sendgrid_api_key = '';
 
-$wp_db = get_db_conn_vals(ABSPATH);
-if ($db = mysqli_connect($wp_db['DB_HOST'], $wp_db['DB_USER'], $wp_db['DB_PASSWORD'], $wp_db['DB_NAME'])) {
-    $sql = sprintf("SELECT option_name, option_value FROM %soptions WHERE option_name IN ('admin_email', 'sendgrid_api_key', 'wp_mail_smtp', 'swpsmtp_options') AND option_value != ''", $wp_db['DB_PREFIX']);
-    if ($result = mysqli_query($db, $sql)) {
-		while( $obj = mysqli_fetch_object( $result) ) {
-			$name = $obj->option_name;
-			$$name = $obj->option_value;
-		}
-	} else {
-		$msg = 'WP MySQL error: ' . mysqli_error();
-	}
-} else {
-    $msg = 'WP MySQL connect error: ' . mysqli_connect_error();
-}
-
-
 
 if ($required) {
 	$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
 	$res = $db->querySingle("SELECT sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, adminemail, emailfrom, confirmed, emailtype, lastupdate FROM backupsettings WHERE id = 1", true);
-	//print_r($res);
+	$slug = $db->querySingle("SELECT slug FROM logins WHERE 1 LIMIT 0,1");
 	if ($res['confirmed'] == 'yes') {
 		get_authorized();
+	} elseif ($res['confirmed'] == 'no' && empty($slug)) {
+		header('Location: '.BASE_URL.'login.php?msg=inprogress');
+		exit;
+	} else {
+		
+		
 	}
+	
+	$wp_db = get_db_conn_vals(ABSPATH);
+	if ($db = mysqli_connect($wp_db['DB_HOST'], $wp_db['DB_USER'], $wp_db['DB_PASSWORD'], $wp_db['DB_NAME'])) {
+		$sql = sprintf("SELECT option_name, option_value FROM %soptions WHERE option_name IN ('admin_email', 'sendgrid_api_key', 'wp_mail_smtp', 'swpsmtp_options') AND option_value != ''", $wp_db['DB_PREFIX']);
+		if ($result = mysqli_query($db, $sql)) {
+			while( $obj = mysqli_fetch_object( $result) ) {
+				$name = $obj->option_name;
+				$$name = $obj->option_value;
+			}
+		} else {
+			$msg = 'WP MySQL error: ' . mysqli_error();
+		}
+	} else {
+		$msg = 'WP MySQL connect error: ' . mysqli_connect_error();
+	}
+	
+	
+	
 	$sendgridapi = $res['sendgridapi'];
 	$adminemail = $res['adminemail'];
 	$emailfrom = $res['emailfrom'];
@@ -65,7 +73,7 @@ if ($required) {
 			$smtpserver = $options['smtp_settings']['host'];
 			$smtpport = $options['smtp_settings']['port'];
 			$smtplogin = $options['smtp_settings']['username'];
-			$smtppassword = $options['smtp_settings']['password'];
+			$smtppassword = '';
 			$smtpsecure = $options['smtp_settings']['type_encryption'];
 		} elseif (!empty($wp_mail_smtp)) { // read options from WP Mail SMTP
 			$smtp = unserialize($wp_mail_smtp);

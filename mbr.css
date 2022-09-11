@@ -18,7 +18,7 @@ h2 {
 table.filelist { margin-top:10px;text-align:left; }
 table.filelist tbody tr td em { color:#7F7F7F; }
 
-#msg { text-align:center; }
+/*#msg { text-align:center; }*/
 
 .send-options { 
 	display:none;

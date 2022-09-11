@@ -1,20 +1,24 @@
 <?php
 include_once 'func.php';
 
-$str = 'order deny,allow
-deny from all
+if ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && ( $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ) ) {
 
-# whitelist your own IP address
-allow from '.$_SERVER['REMOTE_ADDR'];
 
-$savePath = MYBACKUPDIR.'.htaccess';
+	$str = 'order deny,allow
+	deny from all
 
-if (file_exists($savePath)) die('exists');
+	# whitelist your own IP address
+	allow from '.$_SERVER['REMOTE_ADDR'];
 
-$handle = fopen($savePath, 'w+');
-if (fwrite($handle, $str) === FALSE) {
-    echo 'error';
-} else {
-    echo 'okay';
+	$savePath = MYBACKUPDIR.'.htaccess';
+
+	if (file_exists($savePath)) die('exists');
+
+	$handle = fopen($savePath, 'w+');
+	if (fwrite($handle, $str) === FALSE) {
+		echo 'error';
+	} else {
+		echo 'okay';
+	}
+	fclose($handle);
 }
-fclose($handle);

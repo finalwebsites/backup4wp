@@ -1,15 +1,24 @@
 <?php
 include_once 'libs/func.php';
 include_once 'libs/html.php';
-// todo google recaptcha
+// todo google recaptcha or other spam protection (Honeypot)
 $alert_css = '';
 $msg = '';
+
+if (isset($_GET['action']) && $_GET['action'] == 'logout') {
+	delete_login_record();
+	unset($_COOKIE['mybackup_access']); 
+    setcookie('mybackup_access', null, 1, MBDIRNAME."/", $_SERVER['HTTP_HOST']); 
+    header('Location: '.BASE_URL, true, 302);
+	exit;
+}
 
 $messages = array(
 	'expiredlink' => 'The access URL or link is expired. Create a new one.',
 	'invalidsession' => 'Invalid sessions or IP address.',
 	'notfound' => 'The access URL or link is not valid.',
-	'cookieexpired' => 'The cookie is not valid anymore. You need to request a new access URL.'
+	'cookieexpired' => 'The cookie is not valid anymore. You need to request a new access URL.',
+	'inprogress' => 'Configuration in progress... Check your inbox and confirm you email address.'
 );
 
 if (isset($_GET['msg']) && array_key_exists($_GET['msg'], $messages)) {

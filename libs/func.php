@@ -89,6 +89,7 @@ function update_mybackup() {
 		$stmt->bindValue(':lastupdate', date('Y-m-d h:i:s'), SQLITE3_TEXT);
 		$stmt->execute();
 	}
+	$db->close();
 }
 
 function check_cookie() {
@@ -98,11 +99,13 @@ function check_cookie() {
 		return false;
 	} else {
 		if (preg_match('/^[a-f0-9]{32}$/i', $_COOKIE['mybackup_access'], $matches)) {
+			//print_r($matches);
 			$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
 			$stmt = $db->prepare("SELECT ipadres FROM logins WHERE slug = :slug ORDER BY created DESC");
 			$stmt->bindValue(':slug', $matches[0], SQLITE3_TEXT);
 			$res = $stmt->execute();
 			if ($result = $res->fetchArray()) {
+				$db->close();
 				if ($result['ipadres'] == get_client_ip()) {
 					return $matches[0];
 				} else {
@@ -120,6 +123,7 @@ function check_cookie() {
 function check_htaccess() {
 	$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
 	$confirmed = $db->querySingle("SELECT confirmed FROM backupsettings WHERE id = 1");
+	$db->close();
 	if ($confirmed == 'yes') return false;
 	$file = MYBACKUPDIR.'.htaccess';
 	if (file_exists($file)) {
@@ -149,6 +153,7 @@ function get_authorized() {
 		$confirmed = $db->querySingle("SELECT confirmed FROM backupsettings WHERE id = 1");
 		if ($confirmed != 'yes' && empty($_GET['auth'])) {
 			if ($_SERVER['REQUEST_URI'] != MBDIRNAME.'/options.php') {
+				$db->close();
 				header('Location: '.$home.'options.php');
 				exit;
 			}
@@ -160,10 +165,12 @@ function get_authorized() {
 			$res = $stmt->execute();
 			if ($result = $res->fetchArray()) {
 				if ($result['created']+(3600*4) < time()) {
+					$db->close();
 					header('Location: '.$home.'login.php?msg=expiredlink');
 					exit;
 				} else {
 					if ($result['ipadres'] != get_client_ip()) {
+						$db->close();
 						header('Location: '.$home.'login.php?msg=invalidsession');
 						exit;
 					} else {
@@ -171,6 +178,7 @@ function get_authorized() {
 						$confirmed = $db->querySingle("SELECT confirmed FROM backupsettings WHERE id = 1");
 						if ($confirmed == 'no') {
 							$db->exec("UPDATE backupsettings SET confirmed = 'yes' WHERE id = 1");
+							$db->close();
 							header('Location: '.$home.'?msg=confirmed');
 							exit;
 						} else {
@@ -180,6 +188,7 @@ function get_authorized() {
 					}
 				}
 			} else {
+				$db->close();
 				header('Location: '.$home.'login.php?msg=notfound');
 				exit;
 			}
@@ -196,18 +205,41 @@ function get_authorized() {
 }
 
 function create_login_url() {
+	
 	$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
 	$url .= '://'.$_SERVER['HTTP_HOST'].MBDIRNAME.'/?auth=';
-	$slug = md5(uniqid(rand(10000,99999), true));
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
-		$stmt = $db->prepare("INSERT INTO logins (slug, created, ipadres) VALUES (:slug, :created, :ipadres)");
-		$stmt->bindValue(':slug', $slug, SQLITE3_TEXT);
-		$stmt->bindValue(':created', time(), SQLITE3_INTEGER);
-		$stmt->bindValue(':ipadres', get_client_ip(), SQLITE3_TEXT);
-		if ($stmt->execute()) {
+		$stmt = $db->prepare("SELECT slug, created FROM logins WHERE ipadres = :ipadres ORDER BY created DESC LIMIT 0, 1");
+		$stmt->bindValue(':adminemail', get_client_ip(), SQLITE3_TEXT);
+		$res = $stmt->execute();
+		$result = $res->fetchArray();
+		if (isset($result['slug']) && $result['created']+(3600*4) > time()) {
 			$db->close();
-			return $url.$slug;
+			return $url.$result['slug'];
+		} else { 
+			$slug = md5(uniqid(rand(10000,99999), true));
+			$stmt = $db->prepare("INSERT INTO logins (slug, created, ipadres) VALUES (:slug, :created, :ipadres)");
+			$stmt->bindValue(':slug', $slug, SQLITE3_TEXT);
+			$stmt->bindValue(':created', time(), SQLITE3_INTEGER);
+			$stmt->bindValue(':ipadres', get_client_ip(), SQLITE3_TEXT);
+			if ($stmt->execute()) {
+				$return = $url.$slug;
+			} else {
+				$return = $db->lastErrorMsg();
+				
+			}
+			$db->close();
+			return $return;
 		}
+	}
+}
+
+function delete_login_record() {
+	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
+		$stmt = $db->prepare("DELETE FROM logins WHERE ipadres = :ipadres");
+		$stmt->bindValue(':adminemail', get_client_ip(), SQLITE3_TEXT);
+		$res = $stmt->execute();
+		$db->close();
 	}
 }
 
@@ -216,6 +248,9 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
 		$result = $db->querySingle("SELECT sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom, emailtype FROM backupsettings WHERE id = 1", true);
+		$db->close();
+		$status = 'succes';
+		$message = '';
 		if ($result['emailtype'] == 'sendgrid') {
 
 			$email = new \SendGrid\Mail\Mail();
@@ -229,12 +264,14 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 				$response = $sendgrid->send($email);
 				//print_r($response);
 				if ( in_array( $response->statusCode(), range(200, 299) ) ) {
-					return $return_msg;
+					$message = $return_msg;
 				} else {
-					return 'Error, the message hasn\'t been sent.';
+					$status = 'error';
+					$message = 'Error, the message hasn\'t been sent.';
 				}
 			} catch (Exception $e) {
-				return 'Caught exception: '. $e->getMessage() ."\n";
+				$status = 'error';
+				$message = 'Caught exception: '. $e->getMessage() ."\n";
 			}
 		} elseif ($result['emailtype'] == 'smtp') {
 
@@ -254,9 +291,10 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 				$mail->Body = $msg;
 				$mail->AltBody = strip_tags($msg);
 				$mail->send();
-				return $return_msg;
+				$message = $return_msg;
 			} catch (Exception $e) {
-				return 'Message could not be sent. Mailer Error: '.$mail->ErrorInfo;
+				$status = 'error';
+				$message = 'Message could not be sent. Mailer Error: '.$mail->ErrorInfo;
 			}
 		} else {
 			$headers = array(
@@ -266,11 +304,13 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 				'Content-type: text/html; charset=utf-8'
 			);
 			if (mail($to, $subject, $msg, implode("\r\n", $headers))) {
-				return $return_msg;
+				$message = $return_msg;
 			} else {
-				return 'Error, the message hasn\'t been send via the PHP mail() function. Use the SMTP or Sendgrid option instead.';
+				$status = 'error';
+				$message = 'Error, the message hasn\'t been send via the PHP mail() function. Use the SMTP or Sendgrid option instead.';
 			}
 		}
+		return array('status' => $status, 'msg' => $message);
 	}
 }
 
