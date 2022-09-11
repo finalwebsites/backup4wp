@@ -65,7 +65,7 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 ## Update notes
 
 *11th September 2022*
-Several updates and bug fixes for the login function and the options page. In the past it doesn't worked well during the setup, if some setting wasn't correct. These should be fixed now. There is also also a log out function available. We advise to update the application immediately to prevent yourself from future problems. You can keep you current database and files, only the files from the application are modified.
+We did several updates and bug fixes for the login function and the options page. In the past it doesn't worked well during the setup, if some setting wasn't correct. These should be fixed now. There is also also a log out function available now. We advise to update the application immediately to prevent yourself from future problems. You can keep you current database and files, only the files from the application are modified.
 
 *1st May 2022*
 First release v1.1.0, from today on we're using release tags. Do you like to use Composer? Than is this update for you. We packaged Backup4WP and you're able to install the tool using Composer. The PHPMailer, Sendgrid and Mysqldump library are not included in our distribution anymore. Don't worry for the manual installation, we offer a ZIP file with all the library files included. During the installation, you can choose the directory name. Instead of "mybackup", you can use your own name. This makes it a bit more safe if you choose a random name. From our prospective it's safe to update the application for  installations from the last year.
