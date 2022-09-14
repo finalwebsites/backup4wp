@@ -28,7 +28,7 @@ if ($required) {
 	$slug = $db->querySingle("SELECT slug FROM logins WHERE 1 LIMIT 0,1");
 	if ($res['confirmed'] == 'yes') {
 		get_authorized();
-	} elseif ($res['confirmed'] == 'no' && empty($slug)) {
+	} elseif ($res['confirmed'] == 'no' && $slug != NULL) {
 		header('Location: '.BASE_URL.'login.php?msg=inprogress');
 		exit;
 	} else {
