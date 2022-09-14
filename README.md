@@ -32,7 +32,7 @@ If your web host is based on Apache, the is an option to protect the directory u
 Using Composer, just run the following code within the public HTML directory from your WordPress website:
 
 ```
-composer create-project finalwebsites/backup4wp mybackup
+composer create-project finalwebsites/backup4wp:dev-master mybackup
 ```
 
 Replace the directory name "mybackup" with something else, if you like.
@@ -54,7 +54,7 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
     } else {
         exec('composer -V', $output);
         if (substr($output[0], 0, 8) == 'Composer') {
-    		exec('composer create-project finalwebsites/backup4wp mybackup'); // you can use a different directory name (instead of "mybackup")
+    		exec('composer create-project finalwebsites/backup4wp:dev-master mybackup'); // you can use a different directory name (instead of "mybackup")
             echo 'Downloaded and installed Backup4WP using Composer';
     	} else {
     		echo 'Composer isn\'t supported by your web host.';
