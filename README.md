@@ -64,6 +64,9 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 
 ## Update notes
 
+*4th November 2022*
+In some situations there was a PHP memory error while reading the database backup in the restore mode. We fixed it by reading the file line by line using fgets() instead of the file() function.
+
 *11th September 2022*
 We did several updates and bug fixes for the login function and the options page. In the past it doesn't worked well during the setup, if some setting wasn't correct. These should be fixed now. There is also also a log out function available now. We advise to update the application immediately to prevent yourself from future problems. You can keep you current database and files, only the files from the application are modified.
 

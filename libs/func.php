@@ -71,6 +71,7 @@ if (!file_exists(DATAPATH)) {
 	}
 }
 
+
 function update_mybackup() {
 	$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
 	$test = $db->querySingle("SELECT * FROM backupsettings WHERE id = 1", true);
@@ -342,23 +343,26 @@ function get_db_conn_vals($dir) {
 function restore_database($host, $username, $password, $dbname, $sql_path){
     $db = new mysqli($host, $username, $password, $dbname);
     $templine = '';
-    $lines = file($sql_path);
     $error = '';
-    foreach ($lines as $line){
+    $handle = fopen($sql_path, "r");
+	if ($handle) {
+		while (($line = fgets($handle)) !== false) {
         // Continue it if it's a comment empty row
-        if(substr($line, 0, 2) == '--' || $line == ''){
-            continue;
-        }
-        $templine .= $line;
-        // If it has a semicolon at the end, it's the end of the query
-        if (substr(trim($line), -1, 1) == ';'){
-            if(!$db->query($templine)){
+			if(substr($line, 0, 2) == '--' || $line == ''){
+				continue;
+			}
+			$templine .= $line;
+			// If it has a semicolon at the end, it's the end of the query
+			if (substr(trim($line), -1, 1) == ';'){
+				if(!$db->query($templine)){
                 $error .= 'Error performing "<b>' . $templine . '</b>": ' . $db->error . '<br />';
-            }
-            $templine = '';
-        }
-    }
-	$db->close();
+				}
+				$templine = '';
+			}
+		}
+		fclose($handle);
+		$db->close();
+	}
     return ($error != '') ? $error : true;
 }
 

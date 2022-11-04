@@ -22,7 +22,7 @@ $admin_email = '';
 $sendgrid_api_key = '';
 
 
-if ($required) {
+if ($required) { // system requirements are met
 	$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
 	$res = $db->querySingle("SELECT sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, adminemail, emailfrom, confirmed, emailtype, lastupdate FROM backupsettings WHERE id = 1", true);
 	$slug = $db->querySingle("SELECT slug FROM logins WHERE 1 LIMIT 0,1");
@@ -32,10 +32,10 @@ if ($required) {
 		header('Location: '.BASE_URL.'login.php?msg=inprogress');
 		exit;
 	} else {
-		
-		
+
+
 	}
-	
+
 	$wp_db = get_db_conn_vals(ABSPATH);
 	if ($db = mysqli_connect($wp_db['DB_HOST'], $wp_db['DB_USER'], $wp_db['DB_PASSWORD'], $wp_db['DB_NAME'])) {
 		$sql = sprintf("SELECT option_name, option_value FROM %soptions WHERE option_name IN ('admin_email', 'sendgrid_api_key', 'wp_mail_smtp', 'swpsmtp_options') AND option_value != ''", $wp_db['DB_PREFIX']);
@@ -50,9 +50,9 @@ if ($required) {
 	} else {
 		$msg = 'WP MySQL connect error: ' . mysqli_connect_error();
 	}
-	
-	
-	
+
+  // store here the admin email address !
+
 	$sendgridapi = $res['sendgridapi'];
 	$adminemail = $res['adminemail'];
 	$emailfrom = $res['emailfrom'];
@@ -126,10 +126,10 @@ if ($required) {
 				 </div>
 				 <div class="col-md-6">
 					<label for="adminemail">Email address (to)</label>
-					<input type="email" class="form-control" id="adminemail" name="adminemail" value="<?php echo $adminemail; ?>">
+					<input type="email" autocomplete="off" class="form-control" id="adminemail" name="adminemail" value="<?php echo $adminemail; ?>">
 				 </div>
 			    </div>
-				<p>Both email addresses are required and used to send the Backup4WP authentication emails.</p>
+				<p>Both email addresses are required and used to send the Backup4WP authentication emails. Use a sender address that is authenticated for the email option you will choose below.</p>
 			  </div>
 			  <p>How do you like to send the authentication emails? If you switch the options, it's not necessary to empty the other fields.</p>
 			  <div class="form-group">

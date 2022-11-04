@@ -7,8 +7,8 @@ $msg = '';
 
 if (isset($_GET['action']) && $_GET['action'] == 'logout') {
 	delete_login_record();
-	unset($_COOKIE['mybackup_access']); 
-    setcookie('mybackup_access', null, 1, MBDIRNAME."/", $_SERVER['HTTP_HOST']); 
+	unset($_COOKIE['mybackup_access']);
+    setcookie('mybackup_access', null, 1, MBDIRNAME."/", $_SERVER['HTTP_HOST']);
     header('Location: '.BASE_URL, true, 302);
 	exit;
 }
@@ -49,7 +49,7 @@ if (isset($_GET['msg']) && array_key_exists($_GET['msg'], $messages)) {
 
 			  <div class="form-group">
 				  <label for="emailto" class="control-label">Email address</label>
-				  <input type="email" class="form-control" id="emailto" placeholder="your-email-address@domain.com">
+				  <input type="email" class="form-control" id="emailto" placeholder="The WP admin email address">
 
 			  </div>
 
