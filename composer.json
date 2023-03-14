@@ -16,5 +16,10 @@
             "name": "Olaf Lederer",
             "email": "olaf@finalwebsites.com"
         }
-    ]
+    ],
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
 }
