@@ -65,7 +65,7 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 ## Update notes
 
 *18th March 2023*
-In this version we replaced the Sendgrid email option with [MailerSend[(https://www.mailersend.com?ref=lol81qb1dqe0)]. Sendgrid changed their offer and the free option with 12.000 monthly emails isn't available anymore (for new accounts). In place of the Sendgrid API, you can use the Mailersend API. They offer a free version with 12.000 emails per month and many other options, Sendgrid doesn't offer. If you still prefer Sendgrid, you can still use Backup4WP while using the SMTP email option.
+In this version we replaced the Sendgrid email option with [MailerSend](https://www.mailersend.com?ref=lol81qb1dqe0). Sendgrid changed their offer and the free option with 12.000 monthly emails isn't available anymore (for new accounts). In place of the Sendgrid API, you can use the Mailersend API. They offer a free version with 12.000 emails per month and many other options, Sendgrid doesn't offer. If you still prefer Sendgrid, you can still use Backup4WP while using the SMTP email option.
 
 *4th November 2022*
 In some situations there was a PHP memory error while reading the database backup in the restore mode. We fixed it by reading the file line by line using fgets() instead of the file() function.
