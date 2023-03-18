@@ -2,7 +2,7 @@
 include_once 'libs/func.php';
 include_once 'libs/html.php';
 get_authorized();
-update_mybackup();
+//update_mybackup();
 $msg = '';
 $alert_css = '';
 if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {

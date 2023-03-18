@@ -20,8 +20,12 @@ use PHPMailer\PHPMailer\Exception;
 
 use SendGrid\Mail\Mail;
 
+use MailerSend\MailerSend;
+use MailerSend\Helpers\Builder\Recipient;
+use MailerSend\Helpers\Builder\EmailParams;
+
 // This should be the part of the install process
-if (!file_exists(DATAPATH)) {
+if (!file_exists(DATAPATH.'wpbackupsDb.sqlite')) {
 
 	mkdir(DATAPATH, 0755, true);
 
@@ -41,7 +45,7 @@ if (!file_exists(DATAPATH)) {
 		$db->exec("
 			CREATE TABLE IF NOT EXISTS backupsettings (
 				'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-				'sendgridapi' TEXT,
+				'apikey' TEXT,
 				'smtpserver' TEXT,
 				'smtpport' INTEGER,
 				'smtplogin' TEXT,
@@ -56,8 +60,8 @@ if (!file_exists(DATAPATH)) {
 		);
 
 		$db->exec("
-			INSERT INTO backupsettings (id, sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom, adminemail, confirmed, emailtype, lastupdate)
-			VALUES (1, '', '', 587, '', '', 'tls', '', '', 'no', 'sendgrid', '')"
+			INSERT INTO backupsettings (id, apikey, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom, adminemail, confirmed, emailtype, lastupdate)
+			VALUES (1, '', '', 587, '', '', 'tls', '', '', 'no', 'mailersend', '')"
 		);
 
 		$db->exec("
@@ -71,7 +75,8 @@ if (!file_exists(DATAPATH)) {
 	}
 }
 
-
+/*
+// we need to check this later again
 function update_mybackup() {
 	$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
 	$test = $db->querySingle("SELECT * FROM backupsettings WHERE id = 1", true);
@@ -92,7 +97,7 @@ function update_mybackup() {
 	}
 	$db->close();
 }
-
+*/
 function check_cookie() {
 	if (check_htaccess()) {
 		return true;
@@ -206,7 +211,7 @@ function get_authorized() {
 }
 
 function create_login_url() {
-	
+
 	$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
 	$url .= '://'.$_SERVER['HTTP_HOST'].MBDIRNAME.'/?auth=';
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
@@ -217,7 +222,7 @@ function create_login_url() {
 		if (isset($result['slug']) && $result['created']+(3600*4) > time()) {
 			$db->close();
 			return $url.$result['slug'];
-		} else { 
+		} else {
 			$slug = md5(uniqid(rand(10000,99999), true));
 			$stmt = $db->prepare("INSERT INTO logins (slug, created, ipadres) VALUES (:slug, :created, :ipadres)");
 			$stmt->bindValue(':slug', $slug, SQLITE3_TEXT);
@@ -227,7 +232,7 @@ function create_login_url() {
 				$return = $url.$slug;
 			} else {
 				$return = $db->lastErrorMsg();
-				
+
 			}
 			$db->close();
 			return $return;
@@ -248,31 +253,35 @@ function delete_login_record() {
 function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfully.' ) {
 
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
-		$result = $db->querySingle("SELECT sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom, emailtype FROM backupsettings WHERE id = 1", true);
+		$result = $db->querySingle("SELECT apikey, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom, emailtype FROM backupsettings WHERE id = 1", true);
 		$db->close();
 		$status = 'succes';
 		$message = '';
-		if ($result['emailtype'] == 'sendgrid') {
+		if ($result['emailtype'] == 'mailersend') {
+			$mailersend = new MailerSend(['api_key' => $result['apikey']]);
+			$recipients = [
+			    new Recipient($to, ''),
+			];
 
-			$email = new \SendGrid\Mail\Mail();
-			$email->setFrom($result['emailfrom'], $_SERVER['HTTP_HOST']);
-			$email->setSubject($subject);
-			$email->addTo($to);
-			$email->addContent("text/plain", strip_tags($msg));
-			$email->addContent("text/html", $msg);
-			$sendgrid = new \SendGrid($result['sendgridapi']);
+			$emailParams = (new EmailParams())
+			    ->setFrom($result['emailfrom'])
+			    ->setFromName($_SERVER['HTTP_HOST'])
+			    ->setRecipients($recipients)
+			    ->setSubject($subject)
+			    ->setHtml($msg)
+			    ->setText(strip_tags($msg));
 			try {
-				$response = $sendgrid->send($email);
-				//print_r($response);
-				if ( in_array( $response->statusCode(), range(200, 299) ) ) {
+				$response = $mailersend->email->send($emailParams);
+                if ( $response['status_code'] == 202 ) {
 					$message = $return_msg;
 				} else {
-					$status = 'error';
+                    $status = 'error';
 					$message = 'Error, the message hasn\'t been sent.';
-				}
-			} catch (Exception $e) {
+                }
+                
+			} catch (MailerSendException $e) {
 				$status = 'error';
-				$message = 'Caught exception: '. $e->getMessage() ."\n";
+				$message = 'Caught exception: '. $e->getErrors() ."\n";
 			}
 		} elseif ($result['emailtype'] == 'smtp') {
 
@@ -458,3 +467,4 @@ Team Backup4WP</p>
 </html>
 ', $info, $url, $url);
 }
+

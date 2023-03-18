@@ -6,19 +6,18 @@ if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && ( $_SERVER['HTTP_X_REQUESTED_W
 	if (!empty($_POST['emailfrom']) && !empty($_POST['adminemail'])) {
 		$emailfrom = filter_var($_POST['emailfrom'], FILTER_SANITIZE_EMAIL);
 		$adminemail = filter_var($_POST['adminemail'], FILTER_SANITIZE_EMAIL);
-		$sendgridapi = filter_var($_POST['sendgridapi'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+		$mailersendapi  = filter_var($_POST['mailersendapi'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
 		$smtpserver = filter_var($_POST['smtpserver'], FILTER_SANITIZE_URL);
 		$smtpport = intval($_POST['smtpport']);
 		$smtplogin = filter_var($_POST['smtplogin'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
 		$smtppassword = filter_var($_POST['smtppassword'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
 		$smtpsecure = filter_var($_POST['smtpsecure'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
 		$emailtype = filter_var($_POST['emailtype'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-
 		$valid = true;
 		switch ($emailtype) {
-			case 'sendgrid':
-			if ($sendgridapi == '') {
-				echo 'Enter a valid Sendgrid API key'.
+			case 'mailersend':
+			if ($mailersendapi == '') {
+				echo 'Enter a valid API key'.
 				$valid = false;
 			}
 			break;
@@ -32,8 +31,11 @@ if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && ( $_SERVER['HTTP_X_REQUESTED_W
 			break;
 		}
 
+		$apikey = $mailersendapi;
+		//var_dump($apikey);
 
 		if ($valid) {
+            
 			if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
 
 				$row = $db->querySingle("SELECT adminemail, confirmed FROM backupsettings WHERE id = 1", true);
@@ -43,8 +45,9 @@ if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && ( $_SERVER['HTTP_X_REQUESTED_W
 					$confirmed = $row['confirmed'];
 				}
 
-				$stmt = $db->prepare("UPDATE backupsettings SET sendgridapi = :sendgridapi, smtpserver = :smtpserver, smtpport = :smtpport, smtplogin = :smtplogin, smtppassword = :smtppassword, smtpsecure = :smtpsecure, emailfrom = :emailfrom, adminemail = :adminemail, confirmed = :confirmed, emailtype = :emailtype, lastupdate = :lastupdate WHERE id = 1");
-				$stmt->bindValue(':sendgridapi', $sendgridapi, SQLITE3_TEXT);
+
+				$stmt = $db->prepare("UPDATE backupsettings SET apikey = :apikey, smtpserver = :smtpserver, smtpport = :smtpport, smtplogin = :smtplogin, smtppassword = :smtppassword, smtpsecure = :smtpsecure, emailfrom = :emailfrom, adminemail = :adminemail, confirmed = :confirmed, emailtype = :emailtype, lastupdate = :lastupdate WHERE id = 1");
+				$stmt->bindValue(':apikey', $apikey, SQLITE3_TEXT);
 				$stmt->bindValue(':smtpserver', $smtpserver, SQLITE3_TEXT);
 				$stmt->bindValue(':smtpport', $smtpport, SQLITE3_INTEGER);
 				$stmt->bindValue(':smtplogin', $smtplogin, SQLITE3_TEXT);
@@ -70,7 +73,9 @@ if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && ( $_SERVER['HTTP_X_REQUESTED_W
 					}
 					echo $response['msg'];
 				}
-			}
+			} else {
+                echo 'DB error';
+            }
 		}
 	} else {
 		echo 'Error: The required email (from) field is empty.';

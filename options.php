@@ -24,7 +24,7 @@ $sendgrid_api_key = '';
 
 if ($required) { // system requirements are met
 	$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
-	$res = $db->querySingle("SELECT sendgridapi, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, adminemail, emailfrom, confirmed, emailtype, lastupdate FROM backupsettings WHERE id = 1", true);
+	$res = $db->querySingle("SELECT apikey, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, adminemail, emailfrom, confirmed, emailtype, lastupdate FROM backupsettings WHERE id = 1", true);
 	$slug = $db->querySingle("SELECT slug FROM logins WHERE 1 LIMIT 0,1");
 	if ($res['confirmed'] == 'yes') {
 		get_authorized();
@@ -33,12 +33,11 @@ if ($required) { // system requirements are met
 		exit;
 	} else {
 
-
 	}
 
 	$wp_db = get_db_conn_vals(ABSPATH);
 	if ($db = mysqli_connect($wp_db['DB_HOST'], $wp_db['DB_USER'], $wp_db['DB_PASSWORD'], $wp_db['DB_NAME'])) {
-		$sql = sprintf("SELECT option_name, option_value FROM %soptions WHERE option_name IN ('admin_email', 'sendgrid_api_key', 'wp_mail_smtp', 'swpsmtp_options') AND option_value != ''", $wp_db['DB_PREFIX']);
+		$sql = sprintf("SELECT option_name, option_value FROM %soptions WHERE option_name IN ('admin_email', 'apikey', 'wp_mail_smtp', 'mailersend_smtp_user', 'mailersend_smtp_pwd', 'mailersend_sender_email') AND option_value != ''", $wp_db['DB_PREFIX']);
 		if ($result = mysqli_query($db, $sql)) {
 			while( $obj = mysqli_fetch_object( $result) ) {
 				$name = $obj->option_name;
@@ -51,9 +50,7 @@ if ($required) { // system requirements are met
 		$msg = 'WP MySQL connect error: ' . mysqli_connect_error();
 	}
 
-  // store here the admin email address !
-
-	$sendgridapi = $res['sendgridapi'];
+	$mailersendapi = $res['apikey'];
 	$adminemail = $res['adminemail'];
 	$emailfrom = $res['emailfrom'];
 	$smtpserver = $res['smtpserver'];
@@ -64,35 +61,31 @@ if ($required) { // system requirements are met
 	$emailtype = $res['emailtype'];
 	if ($res['lastupdate'] == '') {
 		$adminemail = $admin_email;
-		if (!empty($swpsmtp_options)) { // read options from Easy SMTP
-			$options = unserialize($swpsmtp_options);
-			if ($options['smtp_settings']['host'] == '' && $options['smtp_settings']['username'] == 'apikey') {
-				$sendgridapi = $options['password'];
-			}
-			$emailfrom  = $options['from_email_field'];
-			$smtpserver = $options['smtp_settings']['host'];
-			$smtpport = $options['smtp_settings']['port'];
-			$smtplogin = $options['smtp_settings']['username'];
-			$smtppassword = '';
-			$smtpsecure = $options['smtp_settings']['type_encryption'];
+		if (!empty($mailersend_smtp_user)) { // read options from Mailersend plugin
+			$emailfrom  = $mailersend_sender_email;
+			$smtpserver = 'smtp.mailersend.net';
+			$smtpport = 587;
+			$smtplogin = $mailersend_smtp_user;
+			$smtppassword = $mailersend_smtp_pwd;
+			$smtpsecure = 'tls';
+            $emailtype = 'smtp';
 		} elseif (!empty($wp_mail_smtp)) { // read options from WP Mail SMTP
 			$smtp = unserialize($wp_mail_smtp);
-			if (!empty($smtp['sendgrid']['api_key'])) $sendgridapi  = $smtp['sendgrid']['api_key'];
 			if (!empty($smtp['mail']['from_email'])) $emailfrom  = $smtp['mail']['from_email'];
 			if (!empty($smtp['smtp']['host'])) $smtpserver  = $smtp['smtp']['host'];
 			if (!empty($smtp['smtp']['port'])) $smtpport  = $smtp['smtp']['port'];
 			if (!empty($smtp['smtp']['user'])) $smtplogin  = $smtp['smtp']['user'];
 			if (!empty($smtp['smtp']['pass'])) $smtppassword  = $smtp['smtp']['pass'];
 			if (!empty($smtp['smtp']['encryption'])) $smtpsecure  = $smtp['smtp']['encryption'];
-		} elseif (!empty($sendgrid_api_key)) { // API key setting from old Sendgrid plugin
-			$sendgridapi = $sendgrid_api_key;
-		}
+            $emailtype = 'smtp';
+		} 
 	}
+	if ($emailtype == '') $emailtype = 'mailersend';
 	$checked['tls'] = ($smtpsecure == 'tls') ? 'checked' : '';
 	$checked['ssl'] = ($smtpsecure == 'ssl') ? 'checked' : '';
 	$checked['mail'] = ($emailtype == 'mail') ? 'checked' : '';
 	$checked['smtp'] = ($emailtype == 'smtp') ? 'checked' : '';
-	$checked['sendgrid'] = ($emailtype == 'sendgrid') ? 'checked' : '';
+	$checked['mailersend'] = ($emailtype == 'mailersend') ? 'checked' : '';
 
 }
 ?>
@@ -129,13 +122,13 @@ if ($required) { // system requirements are met
 					<input type="email" autocomplete="off" class="form-control" id="adminemail" name="adminemail" value="<?php echo $adminemail; ?>">
 				 </div>
 			    </div>
-				<p>Both email addresses are required and used to send the Backup4WP authentication emails. Use a sender address that is authenticated for the email option you will choose below.</p>
+				<p>Both email addresses are required and used to send the Backup4WP authentication emails. Use a sender address that is authenticated for the email option you will choose below. You can fill all the different fields, but can only save one type of API key</p>
 			  </div>
 			  <p>How do you like to send the authentication emails? If you switch the options, it's not necessary to empty the other fields.</p>
 			  <div class="form-group">
 				<strong>Send emails via </strong>
 				<label class="radio-inline">
-				  <input type="radio" id="mailtype_sendgrid" name="emailtype" value="sendgrid" <?php echo $checked['sendgrid']; ?>> Sendgrid
+				  <input type="radio" id="mailtype_mailersend" name="emailtype" value="mailersend" <?php echo $checked['mailersend']; ?>> MailerSend
 				</label>
 				<label class="radio-inline">
 				  <input type="radio" id="mailtype_smtp" name="emailtype" value="smtp" <?php echo $checked['smtp']; ?>> SMTP
@@ -144,17 +137,19 @@ if ($required) { // system requirements are met
 				  <input type="radio" id="mailtype_mail" name="emailtype" value="mail" <?php echo $checked['mail']; ?>> PHP mail()
 				</label>
 			  </div>
-			  <div class="send-options" id="use-sendgrid">
-				  <h2>Sendgrid</h2>
-				  <p>We recomend to use <a href="https://sendgrid.com/" target="_blank">Sendgrid</a> as transactional email provider. They offer a free account and the delivery rates are much better compared to the native PHP mail function.</p>
+			  <div class="send-options" id="use-mailersend">
+				  <h2>MailerSend</h2>
+				  <p>We recomend to use <a href="https://www.mailersend.com?ref=lol81qb1dqe0" target="_blank" rel="nofollow">MailerSend</a> as transactional email provider. They offer a free account (12.000 emails / month) and the delivery rates are much better compared to many other methods or email services.</p>
 				  <div class="form-group">
-					<label for="sendgridapi">Sendgrid API key</label>
-					  <input type="text" class="form-control" id="sendgridapi" name="sendgridapi" value="<?php echo $sendgridapi; ?>">
+					<label for="sendgridapi">MailerSend API key</label>
+					  <textarea class="form-control" id="mailersendapi" name="mailersendapi"><?php echo $mailersendapi; ?></textarea>
 
 				  </div>
 			  </div>
+
 			  <div class="send-options" id="use-smtp">
 				  <h2>SMTP</h2>
+                  <p>Unsecure email transport is not supported.</p>
 				  <div class="row">
 					  <div class="form-group col-md-6">
 						<label for="emailfrom">SMTP host or server</label>
