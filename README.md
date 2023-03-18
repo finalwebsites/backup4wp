@@ -19,7 +19,7 @@ If your web host is based on Apache, the is an option to protect the directory u
 ## Features
 * Super fast, a backup from a 500MB website takes only seconds!
 * Optional: Download your backups and use the ZIP file for the site import in Local (by Flywheel)
-* Quick setup, using email credentials from existing plugins like Easy SMTP, WP Mail SMTP or Sendgrid
+* Quick setup, using email credentials from existing plugins like MailerSend SMTP or WP Mail SMTP
 * Apache user can authenticate via login/password or IP address
 * Backup with a single mouse click (full or partly backups)
 * Exclude themes, plugins or media files
@@ -35,11 +35,11 @@ Using Composer, just run the following code within the public HTML directory fro
 composer create-project finalwebsites/backup4wp:dev-master mybackup
 ```
 
-Replace the directory name "mybackup" with something else, if you like.
+Replace the directory name "mybackup" with your unique name, if you like.
 
 ### Manual installation
 
-Download the the zip file here. Extract and upload the files into a directory named "mybackup" (or some other name) right into the website's public folder. Accesss the tool and enter your email address and enter your Sendgrid API key or your SMTP credentials. Confirm your email address via the link you get in your mailbox.
+Download the the zip file here. Extract and upload the files into a directory named "mybackup" (or some other name) right into the website's public folder. Access the tool and enter your email address and enter your MailerSend API key or your SMTP credentials. Confirm your email address via the link you get in your mailbox.
 
 If you like to use the authorization feature provided by Apache, than continue to "Apache authentication" and enter your details on that page. If you need the "Download" option for your backups, you need to change the variable ENABLE_DOWNLOADS to "true" inside the file *libs > func.php*.
 
@@ -64,6 +64,9 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 
 ## Update notes
 
+*18th March 2023*
+In this version we replaced the Sendgrid email option with [MailerSend[(https://www.mailersend.com?ref=lol81qb1dqe0)]. Sendgrid changed their offer and the free option with 12.000 monthly emails isn't available anymore (for new accounts). In place of the Sendgrid API, you can use the Mailersend API. They offer a free version with 12.000 emails per month and many other options, Sendgrid doesn't offer. If you still prefer Sendgrid, you can still use Backup4WP while using the SMTP email option.
+
 *4th November 2022*
 In some situations there was a PHP memory error while reading the database backup in the restore mode. We fixed it by reading the file line by line using fgets() instead of the file() function.
 
@@ -77,7 +80,7 @@ First release v1.1.0, from today on we're using release tags. Do you like to use
 If your WordPress website is using the **Easy SMTP plugin**, Backup4WP will recognize these settings too. Plus, if you use an API key from Sendgrid as a password for this SMTP plugin, the API key is also pre-filled inside the "Sendgrid" section. We changed also the order on how the obtained settings are used: 1. Easy SMTP, 2. WP Mail SMTP and 3. the old Sendgrid plugin.
 
 *3rd April 2022*
-If you like to download your backups, it's necessary now to set the constant variable to "true" inside the file "func.php". Most people doesn't need the download feature. This modification is temproray solution until we find a better way to do this on the options page.
+If you like to download your backups, it's necessary now to set the constant variable to "true" inside the file "func.php". Most people doesn't need the download feature. This modification is temporary solution until we find a better way to do this on the options page.
 
 *19th March 2022*
 The email sender name is now the domain name. That makes it easier to recognize the email message in your inbox if you use the Backup4WP tool for multiple websites.
@@ -93,5 +96,5 @@ We changed the options page that users can use their SMTP server credentials now
 
 ## Credits
 * [Mysqldump by Diego Torres](https://github.com/ifsnop/mysqldump-php)
-* [PHP library for the Sendgrid API v3](https://github.com/sendgrid/sendgrid-php/)
+* [MailerSend PHP SDK](https://github.com/mailersend/mailersend-php/)
 * [PHPMailer - The classic email sending library for PHP](https://github.com/PHPMailer/PHPMailer)
