@@ -3,9 +3,6 @@
     "description": "Backup & Restore for WordPress",
     "type": "project",
     "require": {
-        "sendgrid/sendgrid": "^7.5",
-        "php-http/guzzle7-adapter": "^1.0",
-        "nyholm/psr7": "^1.5",
         "mailersend/mailersend": "^0.8",
         "phpmailer/phpmailer": "^6.5",
         "ifsnop/mysqldump-php": "^2.9"
@@ -16,10 +13,5 @@
             "name": "Olaf Lederer",
             "email": "olaf@finalwebsites.com"
         }
-    ],
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true
-        }
-    }
+    ]
 }
