@@ -276,10 +276,9 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
                     $status = 'error';
 					$message = 'Error, the message hasn\'t been sent.';
                 }
-                
-			} catch (MailerSendException $e) {
+			} catch (\Exception $e) {
 				$status = 'error';
-				$message = 'Caught exception: '. $e->getErrors() ."\n";
+				$message = 'Caught exception: ' . $e->getMessage() . "\n";
 			}
 		} elseif ($result['emailtype'] == 'smtp') {
 
@@ -465,4 +464,3 @@ Team Backup4WP</p>
 </html>
 ', $info, $url, $url);
 }
-
