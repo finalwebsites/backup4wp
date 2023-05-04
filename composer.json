@@ -3,9 +3,9 @@
     "description": "Backup & Restore for WordPress",
     "type": "project",
     "require": {
-        "symfony/http-client": "^6.0",
+        "symfony/http-client": "^5.4",
         "nyholm/psr7": "^1.5",
-        "mailersend/mailersend": "^0.8",
+        "mailersend/mailersend": "^0.10",
         "phpmailer/phpmailer": "^6.5",
         "ifsnop/mysqldump-php": "^2.9"
     },
