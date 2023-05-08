@@ -322,25 +322,33 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 }
 
 function get_db_conn_vals($dir) {
-	$wp_config = $dir.'wp-config.php';
 	$conn = array();
-	if ( file_exists($wp_config) ) {
-		if ($fc = fopen($wp_config, 'r') ) {
-			while (! feof($fc)) {
-				$line = fgets($fc);
-				if ( preg_match('/^\s*define\s*\(\s*[\'"]DB_NAME[\'"]\s*,\s*[\'"](.+?)[\'"]/', $line, $match) ) {
-					$conn['DB_NAME'] = $match[1];
-				} elseif ( preg_match('/^\s*define\s*\(\s*[\'"]DB_USER[\'"]\s*,\s*[\'"](.+?)[\'"]/', $line, $match) ) {
-					$conn['DB_USER'] = $match[1];
-				} elseif ( preg_match('/^\s*define\s*\(\s*[\'"]DB_PASSWORD[\'"]\s*,\s*([\'"])(.+?)\1/', $line, $match) ) {
-					$conn['DB_PASSWORD'] = $match[2];
-				} elseif ( preg_match('/^\s*define\s*\(\s*[\'"]DB_HOST[\'"]\s*,\s*[\'"](.+?)[\'"]/', $line, $match) ) {
-					$conn['DB_HOST'] = $match[1];
-				} elseif ( preg_match('/^\s*\$table_prefix\s*\=\s*[\'"]([a-zA-Z0-9_\-]*)[\'"]/', $line, $match) ) {
-					$conn['DB_PREFIX'] = $match[1];
+	if (getenv('DB_NAME') && getenv('DB_USER') && getenv('DB_PASSWORD') && getenv('DB_HOST')) {
+		$conn['DB_NAME'] = getenv('DB_NAME');
+		$conn['DB_USER'] = getenv('DB_USER');
+		$conn['DB_PASSWORD'] = getenv('DB_PASSWORD');
+		$conn['DB_HOST'] = getenv('DB_HOST');
+		$conn['DB_PREFIX'] = getenv('DB_PREFIX');
+	} else {
+		$wp_config = $dir.'wp-config.php';
+		if ( file_exists($wp_config) ) {
+			if ($fc = fopen($wp_config, 'r') ) {
+				while (! feof($fc)) {
+					$line = fgets($fc);
+					if ( preg_match('/^\s*define\s*\(\s*[\'"]DB_NAME[\'"]\s*,\s*[\'"](.+?)[\'"]/', $line, $match) ) {
+						$conn['DB_NAME'] = $match[1];
+					} elseif ( preg_match('/^\s*define\s*\(\s*[\'"]DB_USER[\'"]\s*,\s*[\'"](.+?)[\'"]/', $line, $match) ) {
+						$conn['DB_USER'] = $match[1];
+					} elseif ( preg_match('/^\s*define\s*\(\s*[\'"]DB_PASSWORD[\'"]\s*,\s*([\'"])(.+?)\1/', $line, $match) ) {
+						$conn['DB_PASSWORD'] = $match[2];
+					} elseif ( preg_match('/^\s*define\s*\(\s*[\'"]DB_HOST[\'"]\s*,\s*[\'"](.+?)[\'"]/', $line, $match) ) {
+						$conn['DB_HOST'] = $match[1];
+					} elseif ( preg_match('/^\s*\$table_prefix\s*\=\s*[\'"]([a-zA-Z0-9_\-]*)[\'"]/', $line, $match) ) {
+						$conn['DB_PREFIX'] = $match[1];
+					}
 				}
+				fclose($fc);
 			}
-			fclose($fc);
 		}
 	}
 	return $conn;
