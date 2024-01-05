@@ -39,7 +39,7 @@ Replace the directory name "mybackup" with your unique name, if you like.
 
 ### Manual installation
 
-Download the the zip file here. Extract and upload the files into a directory named "mybackup" (or some other name) right into the website's public folder. Access the tool and enter your email address and enter your MailerSend API key or your SMTP credentials. Confirm your email address via the link you get in your mailbox.
+[Download the the zip file here](https://github.com/finalwebsites/backup4wp/releases). Extract and upload the files into a directory named "mybackup" (or some other name) right into the website's public folder. Access the tool and enter your email address and enter your MailerSend API key or your SMTP credentials. Confirm your email address via the link you get in your mailbox.
 
 If you like to use the authorization feature provided by Apache, than continue to "Apache authentication" and enter your details on that page. If you need the "Download" option for your backups, you need to change the variable ENABLE_DOWNLOADS to "true" inside the file *libs > func.php*.
 
@@ -63,6 +63,9 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 
 
 ## Update notes
+
+*5th January 2024*
+Inside the function get_db_conn_vals() there was a check for the existens of enviroment variabels. This old check worked only with some "rare" configurations. The check is replaced and the phpdotenv class is used to read the .env file from a website. 
 
 *18th March 2023*
 In this version we replaced the Sendgrid email option with [MailerSend](https://www.mailersend.com?ref=lol81qb1dqe0). Sendgrid changed their offer and the free option with 12.000 monthly emails isn't available anymore (for new accounts). In place of the Sendgrid API, you can use the Mailersend API. They offer a free version with 12.000 emails per month and many other options, Sendgrid doesn't offer. If you still prefer Sendgrid, you can still use Backup4WP while using the SMTP email option.
@@ -98,3 +101,4 @@ We changed the options page that users can use their SMTP server credentials now
 * [Mysqldump by Diego Torres](https://github.com/ifsnop/mysqldump-php)
 * [MailerSend PHP SDK](https://github.com/mailersend/mailersend-php/)
 * [PHPMailer - The classic email sending library for PHP](https://github.com/PHPMailer/PHPMailer)
+* [phpdotenv](https://github.com/vlucas/phpdotenv)

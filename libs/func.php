@@ -1,8 +1,10 @@
 <?php
 
-
 define('MYBACKUPDIR', dirname(dirname(__FILE__)).'/');
 require_once MYBACKUPDIR.'vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__, 3));
+$dotenv->safeLoad();
 
 
 define('ABSPATH', dirname(MYBACKUPDIR).'/');
@@ -323,12 +325,12 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 
 function get_db_conn_vals($dir) {
 	$conn = array();
-	if (getenv('DB_NAME') && getenv('DB_USER') && getenv('DB_PASSWORD') && getenv('DB_HOST')) {
-		$conn['DB_NAME'] = getenv('DB_NAME');
-		$conn['DB_USER'] = getenv('DB_USER');
-		$conn['DB_PASSWORD'] = getenv('DB_PASSWORD');
-		$conn['DB_HOST'] = getenv('DB_HOST');
-		$conn['DB_PREFIX'] = getenv('DB_PREFIX');
+	if (!empty($_ENV['DB_NAME']) && !empty($_ENV['DB_USER']) && !empty($_ENV['DB_PASSWORD']) && !empty($_ENV['DB_HOST'])) {
+		$conn['DB_NAME'] = $_ENV['DB_NAME'];
+		$conn['DB_USER'] = $_ENV['DB_USER'];
+		$conn['DB_PASSWORD'] = $_ENV['DB_PASSWORD'];
+		$conn['DB_HOST'] = $_ENV['DB_HOST'];
+		$conn['DB_PREFIX'] = $_ENV['DB_PREFIX'];
 	} else {
 		$wp_config = $dir.'wp-config.php';
 		if ( file_exists($wp_config) ) {
