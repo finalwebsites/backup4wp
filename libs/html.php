@@ -4,6 +4,7 @@ function mb_navigation($current = '') {
 	$pages = array(
 		'index' => array('url' => BASE_URL, 'label' => 'Manage Backups'),
 		'options' => array('url' => BASE_URL.'options.php', 'label' => 'Options'),
+    'update' => array('url' => BASE_URL.'update.php', 'label' => 'Update'),
 		'home' => array('url' => '//'.$_SERVER['HTTP_HOST'], 'label' => 'Homepage'),
 		'wpadmin' => array('url' => '//'.$_SERVER['HTTP_HOST'].'/wp-admin/', 'label' => 'WP Dashboard'),
 		'help' => array('url' => 'https://backup4wp.com/getting-help/', 'label' => '<span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Getting help', 'target' => '_blank', 'class' => 'nav-highlight'),
