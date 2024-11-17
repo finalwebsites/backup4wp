@@ -139,7 +139,7 @@ if ($required) { // system requirements are met
 			  </div>
 			  <div class="send-options" id="use-mailersend">
 				  <h2>MailerSend</h2>
-				  <p>We recomend to use <a href="https://www.mailersend.com?ref=lol81qb1dqe0" target="_blank" rel="nofollow">MailerSend</a> as transactional email provider. They offer a free account (12.000 emails / month) and the delivery rates are much better compared to many other methods or email services.</p>
+				  <p>We recomend to use <a href="https://www.mailersend.com?ref=lol81qb1dqe0" target="_blank" rel="nofollow">MailerSend</a> as transactional email provider. They offer a free account (3.000 emails / month) and the delivery rates are much better compared to many other methods or email services.</p>
 				  <div class="form-group">
 					<label for="sendgridapi">MailerSend API key</label>
 					  <textarea class="form-control" id="mailersendapi" name="mailersendapi"><?php echo $mailersendapi; ?></textarea>

@@ -8,8 +8,8 @@ $msg = '';
 if (isset($_GET['action']) && $_GET['action'] == 'logout') {
 	delete_login_record();
 	unset($_COOKIE['mybackup_access']);
-    setcookie('mybackup_access', null, 1, MBDIRNAME."/", $_SERVER['HTTP_HOST']);
-    header('Location: '.BASE_URL, true, 302);
+  setcookie('mybackup_access', null, 1, MBDIRNAME."/", $_SERVER['HTTP_HOST']);
+  header('Location: '.BASE_URL.'login.php', true, 302);
 	exit;
 }
 
