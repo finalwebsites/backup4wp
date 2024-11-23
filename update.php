@@ -33,7 +33,7 @@ if (isset($_POST['update']) && $_POST['update'] == 'yes') {
         <p class="lead">Update Backup4WP using composer.</p>
         <?php 
         if ($valid) { 
-        	if ($output) {
+        	if (!empty($output)) {
         		echo '<pre>'.$output.'</pre>';
         	} else {
         		echo '
