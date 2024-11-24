@@ -3,6 +3,7 @@
 You know the problem, you've created a backup for your website using a WordPress backup plugin and your WordPress website breaks after an update. Next you can't restore your website to the previous version because you can't access the WP dashboard anymore.
 Using this backup tool you're able to create a backup outside WordPress. Access the tool again if you need to restore the website. We use the tool to create backups if we install a new theme / plugin or before we do some (smaller) updates.
 
+> [!TIP]
 > Are you looking for the Backup4WP WordPress plugin? The WordPress plugin review team decided to decline our submission. They think that the plugin's concept doesn't follow the rules for a listing in the repository. We accept their decision and removed the plugin here from Github as well.
 
 ### How does it work?
