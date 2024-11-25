@@ -7,27 +7,27 @@ Using this backup tool you're able to create a backup outside WordPress. Access 
 > Now it is also possible to install Backup4WP via the WordPress dashboard. [Download the plugin](https://backup4wp.com/) from our website and install the recent version of Backup4WP with a simple mouse click.
 
 ### How does it work?
-The backup tool makes a copy from your WordPress website and stores the files in a directory outside the public directory. A database dump is also stored in the same directory. During the restore function the files from the backup are moved back to the original location. The database dump is used to restore the database as well.
+The backup tool makes a copy from your WordPress website and saves the files in a directory outside the public directory. A database dump is saved in the same directory. During the restore function the files from the backup are moved back to the original location. The database dump is used to restore the database as well.
 
 ### Test the tool first!
-This tool is using the Linux command line tool "rsync" to copy all the files. We're using the tool for years and it works perfect on all our web servers. It might break your site during the restore, so try the backup tool first on a similar test site.
+This tool is using the Linux command line tool "rsync" to copy all the files. We're using the tool for years and it works perfect on all our web servers. It might break your website during a restore action, so try the backup tool first on a similar test/staging site.
 
 ### Security
-The tool doesn't store any database logins and all files are stored in a directory which is not accessible via the public website. To access the Backup4WP tool, you need to authorize via a link that is send to your own email address. The session expires 4 hours of activity.
+The tool doesn't store any database logins and all files are saved in a directory which is not accessible via the public website. To access the Backup4WP tool, you need to authorize via a link that is send to your own email address. The session expires 4 hours of activity.
 
-If your web host is based on Apache, the is an option to protect the directory using a login/password or by white-listing your IP address.
+If your web host is based on Apache, there is an option to protect the directory using a login/password or by white-listing your IP address.
 
 ## Features
 * Super fast, a backup from a 500MB website takes only seconds!
 * Optional: Download your backups and use the ZIP file for the site import in Local (by Flywheel)
 * Quick setup, using email credentials from existing plugins like MailerSend SMTP or WP Mail SMTP
-* Apache user can authenticate via login/password or IP address
+* Apache server users can authenticate via login/password or IP address
 * Backup with a single mouse click (full or partly backups)
 * Exclude themes, plugins or media files
 * Restore your site even if the WordPress website doesn't work anymore
 * Delete old backups with a single click
 * Place notes with every backup
-* Update the tool via the browser (composer installs only!)
+* Update the tool via the browser (Composer is required)
 
 ## Installation
 
@@ -41,7 +41,7 @@ Replace the directory name "mybackup" with your unique name, if you like.
 
 ### Manual installation
 
-[Download the the zip file here](https://github.com/finalwebsites/backup4wp/releases). Extract and upload the files into a directory named "mybackup" (or some other name) right into the website's public folder. Access the tool and enter your email address and enter your MailerSend API key or your SMTP credentials. Confirm your email address via the link you get in your mailbox.
+[Download the the zip file here](https://github.com/finalwebsites/backup4wp/releases). Extract and upload the files into a directory named "mybackup" (or some other name) right into the website's public folder. Access the tool, enter your email address and enter your MailerSend API key or your SMTP credentials. Confirm your email address via the link you get in your mailbox.
 
 If you like to use the authorization feature provided by Apache, than continue to "Apache authentication" and enter your details on that page. If you need the "Download" option for your backups, you need to change the variable ENABLE_DOWNLOADS to "true" inside the file *libs > func.php*.
 
@@ -67,7 +67,7 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 ## Update notes
 
 *17th November 2024*
-Added a simple update function. If you install Backup4WP via composer, you can update the backup tool via the update page (link in the menu).
+Added a simple update function. If you install Backup4WP via Composer, you can update the backup tool via the update page (link in the menu).
 The log-out link is fixed and redirets to the login page now.
 
 *5th January 2024*
