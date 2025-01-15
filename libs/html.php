@@ -1,5 +1,6 @@
 <?php
 
+
 function mb_navigation($current = '') {
 	$pages = array(
 		'index' => array('url' => BASE_URL, 'label' => 'Manage Backups'),
@@ -19,7 +20,7 @@ function mb_navigation($current = '') {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="https://backup4wp.com/" target="_blank">backup4wp</a>
+          <a class="navbar-brand" href="https://backup4wp.com/" target="_blank">backup4wp <em>'.BWP_VERSION.'</em></a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">';
@@ -33,6 +34,7 @@ function mb_navigation($current = '') {
         $html .= '>'.$page['label'].'</a></li>';
     }
     $html .= '
+            <li><a href="https://github.com/finalwebsites/backup4wp/issues" target="_blank" class="glyphicon glyphicon-comment" aria-hidden="true"></a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

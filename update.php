@@ -6,7 +6,7 @@ get_authorized();
 $msg = '';
 $valid = true;
 if (isset($_POST['update']) && $_POST['update'] == 'yes') {
-	$output = shell_exec('composer update 2>&1');
+	$output = shell_exec('composer update finalwebsites/backup4wp 2>&1');
 } else {
 	if (!file_exists('composer.json')) {
 		$msg = 'The file composer.json doesn\'t exists. An update via the page is not possible.';

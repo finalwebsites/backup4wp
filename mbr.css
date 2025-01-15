@@ -11,6 +11,7 @@ h2 {
   padding: 10px;
 }
 .navbar-inverse .navbar-brand { color: #fff; }
+.navbar-inverse .navbar-brand em { font-size:14px; }
 
 .nav>li>a.nav-highlight { font-weight:700; }
 

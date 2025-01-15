@@ -14,6 +14,8 @@ define('BASE_URL', '//'.$_SERVER['HTTP_HOST'].MBDIRNAME.'/');
 
 define('ENABLE_DOWNLOADS', false); // set to "true" to enable backup downnloads
 
+define('BWP_VERSION', '1.3.0');
+
 ini_set('max_execution_time', '120');
 
 use PHPMailer\PHPMailer\PHPMailer;
