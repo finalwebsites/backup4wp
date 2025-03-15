@@ -67,7 +67,14 @@ if (isset($_GET['msg']) && array_key_exists($_GET['msg'], $messages)) {
 
 	jQuery(document).ready(function($) {
 
-        $('#saveoptions').click(function(e) {
+    $(window).keydown(function(event){
+      if(event.keyCode == 13) {
+        event.preventDefault();
+        return false;
+      }
+    });
+
+    $('#saveoptions').click(function(e) {
 			$('#msg').removeClass('alert alert-warning').html('');
 			var emailto = $('#emailto').val();
 

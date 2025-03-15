@@ -6,13 +6,13 @@ if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && ( $_SERVER['HTTP_X_REQUESTED_W
 	if (!empty($_POST['emailfrom']) && !empty($_POST['adminemail'])) {
 		$emailfrom = filter_var($_POST['emailfrom'], FILTER_SANITIZE_EMAIL);
 		$adminemail = filter_var($_POST['adminemail'], FILTER_SANITIZE_EMAIL);
-		$mailersendapi  = filter_var($_POST['mailersendapi'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+		$mailersendapi  = htmlspecialchars($_POST['mailersendapi']);
 		$smtpserver = filter_var($_POST['smtpserver'], FILTER_SANITIZE_URL);
 		$smtpport = intval($_POST['smtpport']);
-		$smtplogin = filter_var($_POST['smtplogin'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-		$smtppassword = filter_var($_POST['smtppassword'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-		$smtpsecure = filter_var($_POST['smtpsecure'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-		$emailtype = filter_var($_POST['emailtype'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+		$smtplogin = htmlspecialchars($_POST['smtplogin']);
+		$smtppassword = htmlspecialchars($_POST['smtppassword']);
+		$smtpsecure = htmlspecialchars($_POST['smtpsecure']);
+		$emailtype = htmlspecialchars($_POST['emailtype']);
 		$valid = true;
 		switch ($emailtype) {
 			case 'mailersend':

@@ -14,7 +14,7 @@ $excludes_options = array('cache', 'uploads', 'themes', 'plugins');
 
 if (isset($_POST['Submitform'])) {
 	$type = ($_POST['typebackup'] == 'full') ? 'full' : 'part';
-	$description = filter_var($_POST['description'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+	$description = htmlspecialchars($_POST['description']);
 	$dirname = $type.'_'.date('Y-m-d_H:i:s').'_'.rand(1000,9999);
 	$partbackup = false;
 	if ($type == 'full') {

@@ -9,6 +9,7 @@
         "phpmailer/phpmailer": "^6.5",
         "ifsnop/mysqldump-php": "^2.9",
         "vlucas/phpdotenv": "^5.5"
+
     },
     "license": "MIT",
     "authors": [
