@@ -66,6 +66,9 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 
 ## Update notes
 
+*15th March 2025*
+Text sanitization updates to remove the deprecated warnings in PHP 8.2
+
 *17th November 2024*
 Added a simple update function. If you install Backup4WP via Composer, you can update the backup tool via the update page (link in the menu).
 The log-out link is fixed and redirets to the login page now.
