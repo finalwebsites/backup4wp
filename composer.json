@@ -2,6 +2,7 @@
     "name": "finalwebsites/backup4wp",
     "description": "Backup & Restore for WordPress",
     "type": "project",
+    "version": "1.3.2",
     "require": {
         "symfony/http-client": "^5.4",
         "nyholm/psr7": "^1.5",

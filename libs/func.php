@@ -259,7 +259,27 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 		$db->close();
 		$status = 'succes';
 		$message = '';
-		if ($result['emailtype'] == 'mailersend') {
+		if ($result['emailtype'] == 'maileroo') {
+			$client = new MailerooClient($result['apikey']);
+			$client->setFrom($_SERVER['HTTP_HOST'], $result['emailfrom']);
+			$client->setTo('John Doe', 'john.doe@maileroo.com');
+			$client->setSubject($subject);
+			$client->setHtml($msg);
+			$client->setPlain(strip_tags($msg));
+
+			try {
+				$response = $client->sendBasicEmail();
+                if ( $response['status_code'] == 202 ) {
+					$message = $return_msg;
+				} else {
+                    $status = 'error';
+					$message = 'Error, the message hasn\'t been sent.';
+                }
+			} catch (\Exception $e) {
+				$status = 'error';
+				$message = 'Caught exception: ' . $e->getMessage() . "\n";
+			}
+		} elseif ($result['emailtype'] == 'mailersend') {
 			$mailersend = new MailerSend(['api_key' => $result['apikey']]);
 			$recipients = [
 			    new Recipient($to, ''),
