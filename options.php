@@ -104,7 +104,7 @@ if ($required) { // system requirements are met
     <div class="container outwrapper">
       <div class="starter-template">
         <h1>Backup4WP <small>Options</small></h1>
-        <p class="lead">You can send the authentication emails via Sendrid, a SMTP server or the native PHP mail() function. Or you can use the <a href="setup-apache-authentication.php">IP based or login/password authentication</a> (for Apache based web servers)</p>
+        <p class="lead">You can send the authentication emails via Mailersend, a SMTP server or the native PHP mail() function. Or you can use the <a href="setup-apache-authentication.php">IP based or login/password authentication</a> (for Apache based web servers)</p>
         <div id="msg" class="<?php echo $alert_css; ?>" role="alert"><?php echo $msg; ?></div>
 
 
