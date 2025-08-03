@@ -37,7 +37,7 @@ if ($required) { // system requirements are met
 
 	$wp_db = get_db_conn_vals(ABSPATH);
 	if ($db = mysqli_connect($wp_db['DB_HOST'], $wp_db['DB_USER'], $wp_db['DB_PASSWORD'], $wp_db['DB_NAME'])) {
-		$sql = sprintf("SELECT option_name, option_value FROM %soptions WHERE option_name IN ('admin_email', 'apikey', 'wp_mail_smtp', 'mailersend_smtp_user', 'mailersend_smtp_pwd', 'mailersend_sender_email') AND option_value != ''", $wp_db['DB_PREFIX']);
+		$sql = sprintf("SELECT option_name, option_value FROM %soptions WHERE option_name IN ('admin_email', 'apikey', 'wp_mail_smtp', 'mailersend_smtp_user', 'mailersend_smtp_pwd', 'mailersend_sender_email', 'ssbm_api_sending_key', 'ssbm_smtp_username', 'ssbm_smtp_password') AND option_value != ''", $wp_db['DB_PREFIX']);
 		if ($result = mysqli_query($db, $sql)) {
 			while( $obj = mysqli_fetch_object( $result) ) {
 				$name = $obj->option_name;
@@ -49,8 +49,11 @@ if ($required) { // system requirements are met
 	} else {
 		$msg = 'WP MySQL connect error: ' . mysqli_connect_error();
 	}
-
-	$mailersendapi = $res['apikey'];
+	if ($emailtype = 'mailersend') {
+		$mailersendapi = $res['apikey'];
+	} else {
+		$mailerooapii = $res['apikey'];
+	}
 	$adminemail = $res['adminemail'];
 	$emailfrom = $res['emailfrom'];
 	$smtpserver = $res['smtpserver'];
@@ -68,7 +71,15 @@ if ($required) { // system requirements are met
 			$smtplogin = $mailersend_smtp_user;
 			$smtppassword = $mailersend_smtp_pwd;
 			$smtpsecure = 'tls';
-            $emailtype = 'smtp';
+      $emailtype = 'smtp';
+    } elseif (!empty($ssbm_smtp_username)) {
+    	$emailfrom  = $mailersend_sender_email;
+			$smtpserver = 'smtp.maileroo.com';
+			$smtpport = 587;
+			$smtplogin = $ssbm_smtp_username;
+			$smtppassword = $ssbm_smtp_password;
+			$smtpsecure = 'tls';
+      $emailtype = 'smtp';
 		} elseif (!empty($wp_mail_smtp)) { // read options from WP Mail SMTP
 			$smtp = unserialize($wp_mail_smtp);
 			if (!empty($smtp['mail']['from_email'])) $emailfrom  = $smtp['mail']['from_email'];
@@ -80,11 +91,12 @@ if ($required) { // system requirements are met
             $emailtype = 'smtp';
 		} 
 	}
-	if ($emailtype == '') $emailtype = 'mailersend';
+	if ($emailtype == '') $emailtype = 'maileroo';
 	$checked['tls'] = ($smtpsecure == 'tls') ? 'checked' : '';
 	$checked['ssl'] = ($smtpsecure == 'ssl') ? 'checked' : '';
 	$checked['mail'] = ($emailtype == 'mail') ? 'checked' : '';
 	$checked['smtp'] = ($emailtype == 'smtp') ? 'checked' : '';
+	$checked['maileroo'] = ($emailtype == 'maileroo') ? 'checked' : '';
 	$checked['mailersend'] = ($emailtype == 'mailersend') ? 'checked' : '';
 
 }
@@ -128,6 +140,9 @@ if ($required) { // system requirements are met
 			  <div class="form-group">
 				<strong>Send emails via </strong>
 				<label class="radio-inline">
+				  <input type="radio" id="mailtype_maileroo" name="emailtype" value="mailerroo" <?php echo $checked['maileroo']; ?>> Maileroo
+				</label>
+				<label class="radio-inline">
 				  <input type="radio" id="mailtype_mailersend" name="emailtype" value="mailersend" <?php echo $checked['mailersend']; ?>> MailerSend
 				</label>
 				<label class="radio-inline">
@@ -137,11 +152,20 @@ if ($required) { // system requirements are met
 				  <input type="radio" id="mailtype_mail" name="emailtype" value="mail" <?php echo $checked['mail']; ?>> PHP mail()
 				</label>
 			  </div>
+			  <div class="send-options" id="use-maileroo">
+				  <h2>Maileroo</h2>
+				  <p>We recomend to use <a href="https://maileroo.com/?r=backupforwp" target="_blank" rel="nofollow">Maileroo</a> as transactional email provider. They offer a free account with 3.000 emails a month and almost all the features from the paid plans. Paid plans start with $10 for 25.000 emails a month.</p>
+				  <div class="form-group">
+					<label for="mailerooapi">Maileroo API key</label>
+					  <textarea class="form-control" id="mailerooapi" name="mailerooapi"><?php echo $mailerooapii; ?></textarea>
+
+				  </div>
+			  </div>
 			  <div class="send-options" id="use-mailersend">
 				  <h2>MailerSend</h2>
-				  <p>We recomend to use <a href="https://www.mailersend.com?ref=lol81qb1dqe0" target="_blank" rel="nofollow">MailerSend</a> as transactional email provider. They offer a free account (3.000 emails / month) and the delivery rates are much better compared to many other methods or email services.</p>
+				  <p>In the past we recommeded <a href="https://www.mailersend.com?ref=lol81qb1dqe0" target="_blank" rel="nofollow">MailerSend</a> as the most affordable transactional email provider. The free account is good for 3.000 emails a month, which is still a lot.</p>
 				  <div class="form-group">
-					<label for="sendgridapi">MailerSend API key</label>
+					<label for="mailersendapi">MailerSend API key</label>
 					  <textarea class="form-control" id="mailersendapi" name="mailersendapi"><?php echo $mailersendapi; ?></textarea>
 
 				  </div>
@@ -243,6 +267,6 @@ if ($required) { // system requirements are met
 
 	});
 
-    </script>
-  </body>
+  </script>
+	</body>
 </html>

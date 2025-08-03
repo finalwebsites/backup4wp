@@ -7,6 +7,7 @@ if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && ( $_SERVER['HTTP_X_REQUESTED_W
 		$emailfrom = filter_var($_POST['emailfrom'], FILTER_SANITIZE_EMAIL);
 		$adminemail = filter_var($_POST['adminemail'], FILTER_SANITIZE_EMAIL);
 		$mailersendapi  = htmlspecialchars($_POST['mailersendapi']);
+		$mailerooapi  = htmlspecialchars($_POST['mailerooapi']);
 		$smtpserver = filter_var($_POST['smtpserver'], FILTER_SANITIZE_URL);
 		$smtpport = intval($_POST['smtpport']);
 		$smtplogin = htmlspecialchars($_POST['smtplogin']);
@@ -21,6 +22,12 @@ if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && ( $_SERVER['HTTP_X_REQUESTED_W
 				$valid = false;
 			}
 			break;
+			case 'maileroo':
+			if ($mailerooapi == '') {
+				echo 'Enter a valid API key'.
+				$valid = false;
+			}
+			break;
 			case 'smtp':
 			if ($smtpserver == '' || $smtpport < 25 || $smtplogin == '' || $smtppassword == '') {
 				echo 'All fields for the SMTP configuration are required.';
@@ -30,9 +37,6 @@ if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && ( $_SERVER['HTTP_X_REQUESTED_W
 			default;
 			break;
 		}
-
-		$apikey = $mailersendapi;
-		//var_dump($apikey);
 
 		if ($valid) {
             
@@ -44,7 +48,11 @@ if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && ( $_SERVER['HTTP_X_REQUESTED_W
 				} else {
 					$confirmed = $row['confirmed'];
 				}
-
+				if ($emailtype == 'mailersend') {
+					$apikey = $mailersendapi;
+				} else {
+					$apikey = $mailerooapi;
+				}
 
 				$stmt = $db->prepare("UPDATE backupsettings SET apikey = :apikey, smtpserver = :smtpserver, smtpport = :smtpport, smtplogin = :smtplogin, smtppassword = :smtppassword, smtpsecure = :smtpsecure, emailfrom = :emailfrom, adminemail = :adminemail, confirmed = :confirmed, emailtype = :emailtype, lastupdate = :lastupdate WHERE id = 1");
 				$stmt->bindValue(':apikey', $apikey, SQLITE3_TEXT);
