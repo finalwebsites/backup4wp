@@ -204,8 +204,8 @@ function get_authorized() {
 				exit;
 			}
 		} else {
-			if ($cookie = check_cookie()) {
-				setcookie("backup4wp_access", $cookie, time()+(3600*4), "/", $_SERVER['HTTP_HOST']);
+			if (check_cookie()) {
+				setcookie("backup4wp_access", $slug, time()+(3600*4), "/", $_SERVER['HTTP_HOST']);
 			} else {
 				header('Location: '.$home.'login.php?msg=cookieexpired');
 				exit;
