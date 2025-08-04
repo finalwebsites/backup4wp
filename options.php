@@ -51,8 +51,10 @@ if ($required) { // system requirements are met
 	}
 	if ($emailtype = 'mailersend') {
 		$mailersendapi = $res['apikey'];
+		$mailerooapi = '';
 	} else {
-		$mailerooapii = $res['apikey'];
+		$mailerooapi = $res['apikey'];
+		$mailersendapi = '';
 	}
 	$adminemail = $res['adminemail'];
 	$emailfrom = $res['emailfrom'];
@@ -140,7 +142,7 @@ if ($required) { // system requirements are met
 			  <div class="form-group">
 				<strong>Send emails via </strong>
 				<label class="radio-inline">
-				  <input type="radio" id="mailtype_maileroo" name="emailtype" value="mailerroo" <?php echo $checked['maileroo']; ?>> Maileroo
+				  <input type="radio" id="mailtype_maileroo" name="emailtype" value="maileroo" <?php echo $checked['maileroo']; ?>> Maileroo
 				</label>
 				<label class="radio-inline">
 				  <input type="radio" id="mailtype_mailersend" name="emailtype" value="mailersend" <?php echo $checked['mailersend']; ?>> MailerSend
@@ -157,7 +159,7 @@ if ($required) { // system requirements are met
 				  <p>We recomend to use <a href="https://maileroo.com/?r=backupforwp" target="_blank" rel="nofollow">Maileroo</a> as transactional email provider. They offer a free account with 3.000 emails a month and almost all the features from the paid plans. Paid plans start with $10 for 25.000 emails a month.</p>
 				  <div class="form-group">
 					<label for="mailerooapi">Maileroo API key</label>
-					  <textarea class="form-control" id="mailerooapi" name="mailerooapi"><?php echo $mailerooapii; ?></textarea>
+					  <textarea class="form-control" id="mailerooapi" name="mailerooapi"><?php echo $mailerooapi; ?></textarea>
 
 				  </div>
 			  </div>
@@ -195,8 +197,6 @@ if ($required) { // system requirements are met
 						</div>
 					  </div>
 				  </div>
-
-
 				  <div class="form-group row">
 					  <div class="col-md-6">
 						<label for="smtplogin">SMTP login</label>
@@ -231,7 +231,8 @@ if ($required) { // system requirements are met
 	jQuery(document).ready(function($) {
 
 		var curr_type = $("input[name='emailtype']:checked").val();
-        if (curr_type) {
+		console.log(curr_type);
+    if (curr_type) {
 			$("#use-" + curr_type).show();
 		}
 

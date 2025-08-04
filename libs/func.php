@@ -26,6 +26,9 @@ use MailerSend\MailerSend;
 use MailerSend\Helpers\Builder\Recipient;
 use MailerSend\Helpers\Builder\EmailParams;
 
+include_once 'MailerooClient.php';
+use Maileroo\MailerooClient;
+
 // This should be the part of the install process
 if (!file_exists(DATAPATH.'wpbackupsDb.sqlite')) {
 
@@ -103,10 +106,10 @@ function update_mybackup() {
 function check_cookie() {
 	if (check_htaccess()) {
 		return true;
-	}elseif (empty($_COOKIE['mybackup_access'])) {
+	}elseif (empty($_COOKIE['backup4wp_access'])) {
 		return false;
 	} else {
-		if (preg_match('/^[a-f0-9]{32}$/i', $_COOKIE['mybackup_access'], $matches)) {
+		if (preg_match('/^[a-f0-9]{32}$/i', $_COOKIE['backup4wp_access'], $matches)) {
 			//print_r($matches);
 			$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
 			$stmt = $db->prepare("SELECT ipadres FROM logins WHERE slug = :slug ORDER BY created DESC");
@@ -182,7 +185,7 @@ function get_authorized() {
 						header('Location: '.$home.'login.php?msg=invalidsession');
 						exit;
 					} else {
-						setcookie("mybackup_access", $matches[0], time()+(3600*4), MBDIRNAME."/", $_SERVER['HTTP_HOST']);
+						setcookie("backup4wp_access", $matches[0], time()+(3600*4), "/", $_SERVER['HTTP_HOST']);
 						$confirmed = $db->querySingle("SELECT confirmed FROM backupsettings WHERE id = 1");
 						if ($confirmed == 'no') {
 							$db->exec("UPDATE backupsettings SET confirmed = 'yes' WHERE id = 1");
@@ -202,7 +205,7 @@ function get_authorized() {
 			}
 		} else {
 			if ($cookie = check_cookie()) {
-				setcookie("mybackup_access", $cookie, time()+(3600*4), MBDIRNAME."/", $_SERVER['HTTP_HOST']);
+				setcookie("backup4wp_access", $cookie, time()+(3600*4), "/", $_SERVER['HTTP_HOST']);
 			} else {
 				header('Location: '.$home.'login.php?msg=cookieexpired');
 				exit;
@@ -260,22 +263,22 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 		$status = 'succes';
 		$message = '';
 		if ($result['emailtype'] == 'maileroo') {
-			$client = new MailerooClient($result['apikey']);
-			$client->setFrom($_SERVER['HTTP_HOST'], $result['emailfrom']);
-			$client->setTo('John Doe', 'john.doe@maileroo.com');
-			$client->setSubject($subject);
-			$client->setHtml($msg);
-			$client->setPlain(strip_tags($msg));
-
 			try {
+				$client = new MailerooClient($result['apikey']);
+				$client->setFrom($_SERVER['HTTP_HOST'], $result['emailfrom']);
+				$client->setTo('WP Admin', $to);
+				$client->setSubject($subject);
+				$client->setHtml($msg);
+				$client->setPlain(strip_tags($msg));
 				$response = $client->sendBasicEmail();
-                if ( $response['status_code'] == 202 ) {
+                print_r($response);
+                /*if ( $response['status_code'] == 202 ) {
 					$message = $return_msg;
 				} else {
                     $status = 'error';
 					$message = 'Error, the message hasn\'t been sent.';
-                }
-			} catch (\Exception $e) {
+                }*/
+			} catch (Exception $e) {
 				$status = 'error';
 				$message = 'Caught exception: ' . $e->getMessage() . "\n";
 			}
@@ -283,8 +286,7 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 			$mailersend = new MailerSend(['api_key' => $result['apikey']]);
 			$recipients = [
 			    new Recipient($to, ''),
-			];
-
+			]; 
 			$emailParams = (new EmailParams())
 			    ->setFrom($result['emailfrom'])
 			    ->setFromName($_SERVER['HTTP_HOST'])

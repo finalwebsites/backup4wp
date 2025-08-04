@@ -7,8 +7,8 @@ $msg = '';
 
 if (isset($_GET['action']) && $_GET['action'] == 'logout') {
 	delete_login_record();
-	unset($_COOKIE['mybackup_access']);
-  setcookie('mybackup_access', null, 1, MBDIRNAME."/", $_SERVER['HTTP_HOST']);
+	unset($_COOKIE['backup4wp_access']);
+  setcookie('backup4wp_access', null, 1, "/", $_SERVER['HTTP_HOST']);
   header('Location: '.BASE_URL.'login.php', true, 302);
 	exit;
 }
@@ -45,7 +45,7 @@ if (isset($_GET['msg']) && array_key_exists($_GET['msg'], $messages)) {
         <p class="lead">Enter below the email address you've entered via the "Options" page.<br><strong>Tip!</strong> It's often your WordPress admin email address.</p>
         <div id="msg" class="<?php echo $alert_css; ?>" role="alert"><?php echo $msg; ?></div>
 		<div class="settings-container">
-			<form class="form-inline">
+			<form class="form-inline" id="formid">
 
 			  <div class="form-group">
 				  <label for="emailto" class="control-label">Email address</label>
@@ -67,9 +67,11 @@ if (isset($_GET['msg']) && array_key_exists($_GET['msg'], $messages)) {
 
 	jQuery(document).ready(function($) {
 
-    $(window).keydown(function(event){
-      if(event.keyCode == 13) {
-        event.preventDefault();
+
+    $('#formid').on('keyup keypress', function(e) {
+      var keyCode = e.keyCode || e.which;
+      if (keyCode === 13) { 
+        e.preventDefault();
         return false;
       }
     });
@@ -96,6 +98,6 @@ if (isset($_GET['msg']) && array_key_exists($_GET['msg'], $messages)) {
 
 	});
 
-    </script>
+  </script>
   </body>
 </html>
