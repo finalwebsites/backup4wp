@@ -14,7 +14,7 @@ define('BASE_URL', '//'.$_SERVER['HTTP_HOST'].MBDIRNAME.'/');
 
 define('ENABLE_DOWNLOADS', false); // set to "true" to enable backup downnloads
 
-define('BWP_VERSION', '1.3.2');
+define('BWP_VERSION', '1.3.3');
 
 ini_set('max_execution_time', '120');
 
@@ -80,29 +80,6 @@ if (!file_exists(DATAPATH.'wpbackupsDb.sqlite')) {
 	}
 }
 
-/*
-// we need to check this later again
-function update_mybackup() {
-	$db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite');
-	$test = $db->querySingle("SELECT * FROM backupsettings WHERE id = 1", true);
-	if (count($test) == 5) {
-		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtpserver TEXT");
-		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtpport INTEGER");
-		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtplogin TEXT");
-		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtppassword TEXT");
-		$db->exec("ALTER TABLE backupsettings ADD COLUMN smtpsecure TEXT");
-		$db->exec("ALTER TABLE backupsettings ADD COLUMN emailtype TEXT");
-		$db->exec("ALTER TABLE backupsettings ADD COLUMN lastupdate TEXT");
-		$stmt = $db->prepare("UPDATE backupsettings SET smtpport = :smtpport, smtpsecure = :smtpsecure, emailtype = :emailtype, lastupdate = :lastupdate WHERE id = 1");
-		$stmt->bindValue(':smtpport', $smtpport, SQLITE3_INTEGER);
-		$stmt->bindValue(':smtpsecure', $smtpsecure, SQLITE3_TEXT);
-		$stmt->bindValue(':emailtype', $emailtype, SQLITE3_TEXT);
-		$stmt->bindValue(':lastupdate', date('Y-m-d h:i:s'), SQLITE3_TEXT);
-		$stmt->execute();
-	}
-	$db->close();
-}
-*/
 function check_cookie() {
 	if (check_htaccess()) {
 		return true;
@@ -205,7 +182,7 @@ function get_authorized() {
 			}
 		} else {
 			if (check_cookie()) {
-				setcookie("backup4wp_access", $slug, time()+(3600*4), "/", $_SERVER['HTTP_HOST']);
+				setcookie("backup4wp_access", $_COOKIE['backup4wp_access'], time()+(3600*4), "/", $_SERVER['HTTP_HOST']);
 			} else {
 				header('Location: '.$home.'login.php?msg=cookieexpired');
 				exit;
@@ -221,7 +198,7 @@ function create_login_url() {
 	$url .= '://'.$_SERVER['HTTP_HOST'].MBDIRNAME.'/?auth=';
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
 		$stmt = $db->prepare("SELECT slug, created FROM logins WHERE ipadres = :ipadres ORDER BY created DESC LIMIT 0, 1");
-		$stmt->bindValue(':adminemail', get_client_ip(), SQLITE3_TEXT);
+		$stmt->bindValue(':ipadres', get_client_ip(), SQLITE3_TEXT);
 		$res = $stmt->execute();
 		$result = $res->fetchArray();
 		if (isset($result['slug']) && $result['created']+(3600*4) > time()) {
@@ -248,7 +225,7 @@ function create_login_url() {
 function delete_login_record() {
 	if ($db = new SQLite3(DATAPATH.'wpbackupsDb.sqlite')) {
 		$stmt = $db->prepare("DELETE FROM logins WHERE ipadres = :ipadres");
-		$stmt->bindValue(':adminemail', get_client_ip(), SQLITE3_TEXT);
+		$stmt->bindValue(':ipadres', get_client_ip(), SQLITE3_TEXT);
 		$res = $stmt->execute();
 		$db->close();
 	}
@@ -270,14 +247,8 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 				$client->setSubject($subject);
 				$client->setHtml($msg);
 				$client->setPlain(strip_tags($msg));
-				$response = $client->sendBasicEmail();
-                print_r($response);
-                /*if ( $response['status_code'] == 202 ) {
-					$message = $return_msg;
-				} else {
-                    $status = 'error';
-					$message = 'Error, the message hasn\'t been sent.';
-                }*/
+				$client->sendBasicEmail();
+				$message = $return_msg;
 			} catch (Exception $e) {
 				$status = 'error';
 				$message = 'Caught exception: ' . $e->getMessage() . "\n";

@@ -39,6 +39,7 @@ if ($required) { // system requirements are met
 	if ($db = mysqli_connect($wp_db['DB_HOST'], $wp_db['DB_USER'], $wp_db['DB_PASSWORD'], $wp_db['DB_NAME'])) {
 		$sql = sprintf("SELECT option_name, option_value FROM %soptions WHERE option_name IN ('admin_email', 'apikey', 'wp_mail_smtp', 'mailersend_smtp_user', 'mailersend_smtp_pwd', 'mailersend_sender_email', 'ssbm_api_sending_key', 'ssbm_smtp_username', 'ssbm_smtp_password') AND option_value != ''", $wp_db['DB_PREFIX']);
 		if ($result = mysqli_query($db, $sql)) {
+			
 			while( $obj = mysqli_fetch_object( $result) ) {
 				$name = $obj->option_name;
 				$$name = $obj->option_value;
@@ -258,9 +259,9 @@ if ($required) { // system requirements are met
     					if (data == 'okay') {
     						$('#msg').addClass('alert alert-success').html('Your settings are saved.');
     					} else {
-                            $('#msg').addClass('alert alert-warning').html(data);
+                $('#msg').addClass('alert alert-warning').html(data);
     					}
-                    }
+            }
     			});
             }
 			e.preventDefault();

@@ -66,6 +66,12 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 
 ## Update notes
 
+*6th August 2025*
+Added email support using the Maileroo API, [Maileroo](https://maileroo.com/?r=backupforwp) is a very affordable transactional email provider with many features, even in the free version!
+The Update function is gone. Use the Backup4WP WordPress plugin for a similar update feature.
+To support an automatic authentication feature via the WordPress plugin, the cookie domain value is valid now for the site root.
+
+
 *15th March 2025*
 Text sanitization updates to prevent "deprecated warnings" in PHP 8.2
 
