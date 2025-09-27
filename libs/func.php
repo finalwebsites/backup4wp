@@ -66,7 +66,7 @@ if (!file_exists(DATAPATH.'wpbackupsDb.sqlite')) {
 
 		$db->exec("
 			INSERT INTO backupsettings (id, apikey, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom, adminemail, confirmed, emailtype, lastupdate)
-			VALUES (1, '', '', 587, '', '', 'tls', '', '', 'no', 'mailersend', '')"
+			VALUES (1, '', '', 587, '', '', 'tls', '', '', 'no', 'maileroo', '')"
 		);
 
 		$db->exec("
