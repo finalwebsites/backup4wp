@@ -18,7 +18,7 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Manage Backups | Backup4WP</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="mbr.css" rel="stylesheet">
   </head>
   <body>
@@ -114,81 +114,100 @@ if (isset($_GET['msg']) && $_GET['msg'] == 'confirmed') {
       </div>
 
     </div><!-- /.container -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-	<script>
+    <div class="modal fade" id="backupModal" tabindex="-1" role="dialog">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">Please wait...</h4>
+		      </div>
+		      <div class="modal-body">
+		        <p>Your backup (file) is being processed,</p>
+		        <p><img src="img/loadingAnimation.gif" alt="Loading..."></p>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script>
 
-	jQuery(document).ready(function($) {
+		jQuery(document).ready(function($) {
 
-		$('.submitbtn').click(function(e) {
-			$('#msg').removeClass('alert alert-success').html('');
-			var btn = $(this);
-			var btntext = $(this).text();
-			var btnval = $(this).val();
-			btn.text('Please wait...');
-			$.ajax({
-				url: "libs/backup.php",
-                type: 'POST',
-                data: $('form#myform').serialize() + '&typebackup=' + btnval,
-                success: function (data) {
-					btn.text(btntext);
-					if (data == 'okay') {
-						$('#msg').addClass('alert alert-success').html('The WordPress backup was succesfully, <a href="index.php">click here</a> to refresh the backup list.');
-                        setTimeout(location.reload.bind(location), 5000);
-					} else {
-                        $('#msg').addClass('alert alert-danger').html(data);
-					}
-                }
+			$('.submitbtn').click(function(e) {
+				$('#msg').removeClass('alert alert-success').html('');
+				var btn = $(this);
+				var btntext = $(this).text();
+				var btnval = $(this).val();
+				$('#backupModal').modal('show');
+				$.ajax({
+					url: "libs/backup.php",
+	        type: 'POST',
+	        data: $('form#myform').serialize() + '&typebackup=' + btnval,
+	        success: function (data) {
+						$('#backupModal').modal('hide');
+						if (data == 'okay') {
+							$('#msg').addClass('alert alert-success').html('The WordPress backup was succesfully, <a href="index.php">click here</a> to refresh the backup list.');
+	          	setTimeout(location.reload.bind(location), 2000);
+						} else {
+	          	$('#msg').addClass('alert alert-danger').html(data);
+						}
+	        }
+				});
+				e.preventDefault();
 			});
-			e.preventDefault();
-		});
 
-		$('.delete').click(function(e) {
-			$('#msg').removeClass('alert alert-success').html('<img src="img/loadingAnimation.gif" alt="Please wait...">');
-			var id = $(this).closest('tr').attr('id');
-			$.ajax({
-				url: "libs/delete.php",
-                type: 'POST',
-                data: 'delid=' + id,
-                success: function (data) {
-					if (data == 'okay') {
-						$('#msg').addClass('alert alert-success').html('The WordPress backup is removed, <a href="index.php">click here</a> to refresh the backup list.');
-						setTimeout(location.reload.bind(location), 5000);
-					} else {
-                        //
-					}
-                }
+			$('.delete').click(function(e) {
+				$('#backupModal').modal('show');
+				var id = $(this).closest('tr').attr('id');
+				$.ajax({
+					url: "libs/delete.php",
+	        type: 'POST',
+	        data: 'delid=' + id,
+	        success: function (data) {
+	        	$('#backupModal').modal('hide');
+						if (data == 'okay') {
+							$('#msg').addClass('alert alert-success').html('The WordPress backup is removed, <a href="index.php">click here</a> to refresh the backup list.');
+							setTimeout(location.reload.bind(location), 5000);
+						} else {
+	            //
+						}
+	        }
+				});
+				e.preventDefault();
 			});
-			e.preventDefault();
-		});
 
-		$('.restore').click(function(e) {
-			$('#msg').removeClass('alert alert-danger alert-success').html('<img src="img/loadingAnimation.gif" alt="Please wait...">');
-			var id = $(this).closest('tr').attr('id');
-			$.ajax({
-				url: "libs/restore.php",
-                type: 'POST',
-                data: 'backupid=' + id,
-                success: function (data) {
-					if (data == 'okay') {
-						$('#msg').addClass('alert alert-success').html('The WordPress backup is succesfully restored.');
-						setTimeout(location.reload.bind(location), 5000);
-					} else {
-						$('#msg').addClass('alert alert-danger').html(data);
-					}
-                }
+			$('.restore').click(function(e) {
+				$('#backupModal').modal('show');
+				var id = $(this).closest('tr').attr('id');
+				$.ajax({
+					url: "libs/restore.php",
+	        type: 'POST',
+	        data: 'backupid=' + id,
+	        success: function (data) {
+	        	$('#backupModal').modal('hide');
+						if (data == 'okay') {
+							$('#msg').addClass('alert alert-success').html('The WordPress backup is succesfully restored.');
+							setTimeout(location.reload.bind(location), 2000);
+						} else {
+							$('#msg').addClass('alert alert-danger').html(data);
+						}
+	        }
+				});
+				e.preventDefault();
 			});
-			e.preventDefault();
+			$('.download').click(function(e) {
+				e.preventDefault();
+				var id = $(this).closest('tr').attr('id');
+				$(this).attr("disabled", true);
+				$('#msg').addClass('alert alert-info').html('Please wait until the download is done. <a href="index.php">Click here</a> to refresh the backup list.');
+				window.location.href = 'download.php?dlid=' + id;
+			});
 		});
-		$('.download').click(function(e) {
-			e.preventDefault();
-			var id = $(this).closest('tr').attr('id');
-			$(this).attr("disabled", true);
-			$('#msg').addClass('alert alert-info').html('Please wait until the download is done. <a href="index.php">Click here</a> to refresh the backup list.');
-			window.location.href = 'download.php?dlid=' + id;
-		});
-	});
 
-    </script>
+	  </script>
   </body>
 </html>
