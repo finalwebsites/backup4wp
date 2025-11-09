@@ -37,7 +37,7 @@ if ($required) { // system requirements are met
 
 	$wp_db = get_db_conn_vals(ABSPATH);
 	if ($db = mysqli_connect($wp_db['DB_HOST'], $wp_db['DB_USER'], $wp_db['DB_PASSWORD'], $wp_db['DB_NAME'])) {
-		$sql = sprintf("SELECT option_name, option_value FROM %soptions WHERE option_name IN ('admin_email', 'apikey', 'wp_mail_smtp', 'mailersend_smtp_user', 'mailersend_smtp_pwd', 'mailersend_sender_email', 'ssbm_from_email', ssbm_api_sending_key', 'ssbm_smtp_username', 'ssbm_smtp_password') AND option_value != ''", $wp_db['DB_PREFIX']);
+		$sql = sprintf("SELECT option_name, option_value FROM %soptions WHERE option_name IN ('admin_email', 'apikey', 'wp_mail_smtp', 'mailersend_smtp_user', 'mailersend_smtp_pwd', 'mailersend_sender_email', 'ssbm_api_sending_key', 'ssbm_smtp_username', 'ssbm_smtp_password', 'ssbm_from_email') AND option_value != ''", $wp_db['DB_PREFIX']);
 		if ($result = mysqli_query($db, $sql)) {
 			
 			while( $obj = mysqli_fetch_object( $result) ) {
@@ -68,19 +68,19 @@ if ($required) { // system requirements are met
 	if ($res['lastupdate'] == '') {
 		$adminemail = $admin_email;
 		if (!empty($mailersend_smtp_user)) { // read options from Mailersend plugin
-			$emailfrom  = $mailersend_sender_email;
+			$emailfrom  = (isset($mailersend_sender_email)) ? $mailersend_sender_email : '';
 			$smtpserver = 'smtp.mailersend.net';
 			$smtpport = 587;
 			$smtplogin = $mailersend_smtp_user;
-			$smtppassword = $mailersend_smtp_pwd;
+			$smtppassword = (isset($mailersend_smtp_pwd)) ? $mailersend_smtp_pwd : '';
 			$smtpsecure = 'tls';
       $emailtype = 'smtp';
     } elseif (!empty($ssbm_smtp_username)) {
-    	$emailfrom  = $ssbm_from_email;
+    	$emailfrom  = (isset($ssbm_from_email)) ? $ssbm_from_email : '';
 			$smtpserver = 'smtp.maileroo.com';
 			$smtpport = 587;
 			$smtplogin = $ssbm_smtp_username;
-			$smtppassword = $ssbm_smtp_password;
+			$smtppassword = (isset($ssbm_smtp_password)) ? $ssbm_smtp_password : '';
 			$smtpsecure = 'tls';
       $emailtype = 'smtp';
 		} elseif (!empty($wp_mail_smtp)) { // read options from WP Mail SMTP
@@ -124,151 +124,151 @@ if ($required) { // system requirements are met
 
 
         <?php if ($required) { ?>
-		<div class="settings-container">
-			<form class="form" id="optionform">
-			  <div class="well well-sm">
-				<div class="form-group row">
-				  <div class="col-md-6">
-					<label for="emailfrom">Email address (from)</label>
-					<input type="email" class="form-control" id="emailfrom" name="emailfrom" value="<?php echo $emailfrom; ?>">
-				 </div>
-				 <div class="col-md-6">
-					<label for="adminemail">Email address (to)</label>
-					<input type="email" autocomplete="off" class="form-control" id="adminemail" name="adminemail" value="<?php echo $adminemail; ?>">
-				 </div>
-			    </div>
-				<p>Both email addresses are required and used to send the Backup4WP authentication emails. Use a sender address that is authenticated for the email option you will choose below. You can fill all the different fields, but can only save one type of API key</p>
-			  </div>
-			  <p>How do you like to send the authentication emails? If you switch the options, it's not necessary to empty the other fields.</p>
-			  <div class="form-group">
-				<strong>Send emails via </strong>
-				<label class="radio-inline">
-				  <input type="radio" id="mailtype_maileroo" name="emailtype" value="maileroo" <?php echo $checked['maileroo']; ?>> Maileroo
-				</label>
-				<label class="radio-inline">
-				  <input type="radio" id="mailtype_mailersend" name="emailtype" value="mailersend" <?php echo $checked['mailersend']; ?>> MailerSend
-				</label>
-				<label class="radio-inline">
-				  <input type="radio" id="mailtype_smtp" name="emailtype" value="smtp" <?php echo $checked['smtp']; ?>> SMTP
-				</label>
-				<label class="radio-inline">
-				  <input type="radio" id="mailtype_mail" name="emailtype" value="mail" <?php echo $checked['mail']; ?>> PHP mail()
-				</label>
-			  </div>
-			  <div class="send-options" id="use-maileroo">
-				  <h2>Maileroo</h2>
-				  <p>We recomend to use <a href="https://maileroo.com/?r=backupforwp" target="_blank" rel="nofollow">Maileroo</a> as transactional email provider. They offer a free account with 3.000 emails a month and almost all the features from the paid plans. Paid plans start with $10 for 25.000 emails a month.</p>
-				  <div class="form-group">
-					<label for="mailerooapi">Maileroo API key</label>
-					  <textarea class="form-control" id="mailerooapi" name="mailerooapi"><?php echo $mailerooapi; ?></textarea>
-
-				  </div>
-			  </div>
-			  <div class="send-options" id="use-mailersend">
-				  <h2>MailerSend</h2>
-				  <p>In the past we recommeded <a href="https://www.mailersend.com?ref=lol81qb1dqe0" target="_blank" rel="nofollow">MailerSend</a> as the most affordable transactional email provider. The free account is good for 3.000 emails a month, which is still a lot.</p>
-				  <div class="form-group">
-					<label for="mailersendapi">MailerSend API key</label>
-					  <textarea class="form-control" id="mailersendapi" name="mailersendapi"><?php echo $mailersendapi; ?></textarea>
-
-				  </div>
-			  </div>
-
-			  <div class="send-options" id="use-smtp">
-				  <h2>SMTP</h2>
-                  <p>Unsecure email transport is not supported.</p>
-				  <div class="row">
-					  <div class="form-group col-md-6">
-						<label for="emailfrom">SMTP host or server</label>
-						<input type="text" class="form-control" id="smtpserver" name="smtpserver" value="<?php echo $smtpserver; ?>">
+				<div class="settings-container">
+					<form class="form" id="optionform">
+					  <div class="well well-sm">
+						<div class="form-group row">
+						  <div class="col-md-6">
+							<label for="emailfrom">Email address (from)</label>
+							<input type="email" class="form-control" id="emailfrom" name="emailfrom" value="<?php echo $emailfrom; ?>">
+						 </div>
+						 <div class="col-md-6">
+							<label for="adminemail">Email address (to)</label>
+							<input type="email" autocomplete="off" class="form-control" id="adminemail" name="adminemail" value="<?php echo $adminemail; ?>">
+						 </div>
+					    </div>
+						<p>Both email addresses are required and used to send the Backup4WP authentication emails. Use a sender address that is authenticated for the email option you will choose below. You can fill all the different fields, but can only save one type of API key</p>
 					  </div>
-					  <div class="form-group col-md-3">
-						<label for="smtpport">SMTP port</label>
-						<input type="number" class="form-control" id="smtpport" name="smtpport" value="<?php echo $smtpport; ?>">
+					  <p>How do you like to send the authentication emails? If you switch the options, it's not necessary to empty the other fields.</p>
+					  <div class="form-group">
+						<strong>Send emails via </strong>
+						<label class="radio-inline">
+						  <input type="radio" id="mailtype_maileroo" name="emailtype" value="maileroo" <?php echo $checked['maileroo']; ?>> Maileroo
+						</label>
+						<label class="radio-inline">
+						  <input type="radio" id="mailtype_mailersend" name="emailtype" value="mailersend" <?php echo $checked['mailersend']; ?>> MailerSend
+						</label>
+						<label class="radio-inline">
+						  <input type="radio" id="mailtype_smtp" name="emailtype" value="smtp" <?php echo $checked['smtp']; ?>> SMTP
+						</label>
+						<label class="radio-inline">
+						  <input type="radio" id="mailtype_mail" name="emailtype" value="mail" <?php echo $checked['mail']; ?>> PHP mail()
+						</label>
 					  </div>
-					  <div class="form-group col-md-3">
-						<label>SMTP encryption</label>
-						<div>
-							<label class="radio-inline">
-								<input type="radio" id="smtpsecure_tls" name="smtpsecure" value="tls" <?php echo $checked['tls']; ?>> tls
-							</label>
-							<label class="radio-inline">
-								<input type="radio" id="smtpsecure_ssl" name="smtpsecure" value="ssl" <?php echo $checked['ssl']; ?>> ssl
-							</label>
-						</div>
+					  <div class="send-options" id="use-maileroo">
+						  <h2>Maileroo</h2>
+						  <p>We recomend to use <a href="https://maileroo.com/?r=backupforwp" target="_blank" rel="nofollow">Maileroo</a> as transactional email provider. They offer a free account with 3.000 emails a month and almost all the features from the paid plans. Paid plans start with $10 for 25.000 emails a month.</p>
+						  <div class="form-group">
+							<label for="mailerooapi">Maileroo API key</label>
+							  <textarea class="form-control" id="mailerooapi" name="mailerooapi"><?php echo $mailerooapi; ?></textarea>
+
+						  </div>
 					  </div>
-				  </div>
-				  <div class="form-group row">
-					  <div class="col-md-6">
-						<label for="smtplogin">SMTP login</label>
-						<input type="text" class="form-control" id="smtplogin" name="smtplogin" value="<?php echo $smtplogin; ?>">
+					  <div class="send-options" id="use-mailersend">
+						  <h2>MailerSend</h2>
+						  <p>In the past we recommeded <a href="https://www.mailersend.com?ref=lol81qb1dqe0" target="_blank" rel="nofollow">MailerSend</a> as the most affordable transactional email provider. The free account is good for 3.000 emails a month, which is still a lot.</p>
+						  <div class="form-group">
+							<label for="mailersendapi">MailerSend API key</label>
+							  <textarea class="form-control" id="mailersendapi" name="mailersendapi"><?php echo $mailersendapi; ?></textarea>
+
+						  </div>
 					  </div>
-					  <div class="col-md-6">
-						<label for="smtppassword">SMTP password</label>
-						<input type="text" class="form-control" id="smtppassword" name="smtppassword" value="<?php echo $smtppassword; ?>">
+
+					  <div class="send-options" id="use-smtp">
+						  <h2>SMTP</h2>
+		                  <p>Unsecure email transport is not supported.</p>
+						  <div class="row">
+							  <div class="form-group col-md-6">
+								<label for="emailfrom">SMTP host or server</label>
+								<input type="text" class="form-control" id="smtpserver" name="smtpserver" value="<?php echo $smtpserver; ?>">
+							  </div>
+							  <div class="form-group col-md-3">
+								<label for="smtpport">SMTP port</label>
+								<input type="number" class="form-control" id="smtpport" name="smtpport" value="<?php echo $smtpport; ?>">
+							  </div>
+							  <div class="form-group col-md-3">
+								<label>SMTP encryption</label>
+								<div>
+									<label class="radio-inline">
+										<input type="radio" id="smtpsecure_tls" name="smtpsecure" value="tls" <?php echo $checked['tls']; ?>> tls
+									</label>
+									<label class="radio-inline">
+										<input type="radio" id="smtpsecure_ssl" name="smtpsecure" value="ssl" <?php echo $checked['ssl']; ?>> ssl
+									</label>
+								</div>
+							  </div>
+						  </div>
+						  <div class="form-group row">
+							  <div class="col-md-6">
+								<label for="smtplogin">SMTP login</label>
+								<input type="text" class="form-control" id="smtplogin" name="smtplogin" value="<?php echo $smtplogin; ?>">
+							  </div>
+							  <div class="col-md-6">
+								<label for="smtppassword">SMTP password</label>
+								<input type="text" class="form-control" id="smtppassword" name="smtppassword" value="<?php echo $smtppassword; ?>">
+							  </div>
+						  </div>
 					  </div>
-				  </div>
-			  </div>
-			  <div class="send-options" id="use-mail">
-				  <h2>PHP mail()</h2>
-				  <p><strong>Sending emails via the PHP's mail() function is not recommended.</strong> There are no options to configure...</p>
-			  </div>
+					  <div class="send-options" id="use-mail">
+						  <h2>PHP mail()</h2>
+						  <p><strong>Sending emails via the PHP's mail() function is not recommended.</strong> There are no options to configure...</p>
+					  </div>
 
 
 
-			  <div class="text-right">
-				  <button type="button" class="btn btn-primary" id="saveoptions">Save options</button>
-			  </div>
-			</form>
-        </div>
-		<?php } // required ?>
+					  <div class="text-right">
+						  <button type="button" class="btn btn-primary" id="saveoptions">Save options</button>
+					  </div>
+					</form>
+		    </div>
+				<?php } // required ?>
       </div>
-
     </div><!-- /.container -->
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-	<script>
+		<script>
 
-	jQuery(document).ready(function($) {
+		jQuery(document).ready(function($) {
 
-		var curr_type = $("input[name='emailtype']:checked").val();
-		console.log(curr_type);
-    if (curr_type) {
-			$("#use-" + curr_type).show();
-		}
+			var curr_type = $("input[name='emailtype']:checked").val();
+			//console.log(curr_type);
+	    if (curr_type) {
+				$("#use-" + curr_type).show();
+			}
 
-		$("[name=emailtype]").click(function(){
-			$('.send-options').hide();
-			$("#use-" + $(this).val()).show();
+			$("[name=emailtype]").click(function(){
+				$('.send-options').hide();
+				$("#use-" + $(this).val()).show();
+			});
+
+	    $('#saveoptions').click(function(e) {
+				$('#msg').removeClass('alert-warning alert-success alert-danger alert').html('');
+				var emailfrom = $('#emailfrom').val();
+				var adminemail = $('#adminemail').val();
+
+	    	if (!adminemail || !emailfrom) {
+	        $('#msg').addClass('alert alert-warning').html('Both email addresses are required.');
+	        return false;
+	      } else {
+	    		$.ajax({
+	    			url: "libs/save_options.php",
+	          type: 'POST',
+	          data: $('#optionform').serialize(),
+	          success: function (data) {
+							if (data == 'okay') {
+								$('#msg').addClass('alert alert-success').html('Your settings are saved.');
+							} else {
+		            $('#msg').addClass('alert alert-warning').html(data);
+							}
+	          }
+	    		});
+	      }
+				e.preventDefault();
+			});
+
 		});
 
-        $('#saveoptions').click(function(e) {
-			$('#msg').removeClass('alert-warning alert-success alert-danger alert').html('');
-			var emailfrom = $('#emailfrom').val();
-			var adminemail = $('#adminemail').val();
-
-            if (!adminemail || !emailfrom) {
-                $('#msg').addClass('alert alert-warning').html('Both email addresses are required.');
-                return false;
-            } else {
-    			$.ajax({
-    				url: "libs/save_options.php",
-                    type: 'POST',
-                    data: $('#optionform').serialize(),
-                    success: function (data) {
-    					if (data == 'okay') {
-    						$('#msg').addClass('alert alert-success').html('Your settings are saved.');
-    					} else {
-                $('#msg').addClass('alert alert-warning').html(data);
-    					}
-            }
-    			});
-            }
-			e.preventDefault();
-		});
-
-	});
-
-  </script>
+	  </script>
 	</body>
 </html>

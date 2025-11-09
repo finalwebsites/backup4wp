@@ -14,7 +14,7 @@ define('BASE_URL', '//'.$_SERVER['HTTP_HOST'].MBDIRNAME.'/');
 
 define('ENABLE_DOWNLOADS', false); // set to "true" to enable backup downnloads
 
-define('BWP_VERSION', '1.3.3');
+define('BWP_VERSION', '1.3.4');
 
 ini_set('max_execution_time', '120');
 

@@ -20,7 +20,7 @@ If your web host is based on Apache, there is an option to protect the directory
 ## Features
 * Super fast, a backup from a 500MB website takes only seconds!
 * Optional: Download your backups and use the ZIP file for the site import in Local (by Flywheel)
-* Quick setup, using email credentials from existing plugins like MailerSend SMTP or WP Mail SMTP
+* Quick setup, using email credentials from existing plugins like [Maileroo](https://maileroo.com/?r=backupforwp) or WP Mail SMTP
 * Apache server users can authenticate via login/password or IP address
 * Backup with a single mouse click (full or partly backups)
 * Exclude themes, plugins or media files
@@ -59,11 +59,14 @@ Use this snippet if you use ManageWP. Just run the code and access the tool and 
 
 ## Update notes
 
+*9th November 2025*
+In some cases, the settings for Maileroo and Mailersend weren't saved correctly. This has now been resolved. Error messages about invalid variables during a new installation have also been removed.
+Whenever you perform an action (backup, restore, or delete), a popup will now appear showing the progress.
+
 *6th August 2025*
 Added email support using the Maileroo API, [Maileroo](https://maileroo.com/?r=backupforwp) is a very affordable transactional email provider with many features, even in the free version!
 The Update function is gone. Use the Backup4WP WordPress plugin for a similar update feature.
 To support an automatic authentication feature via the WordPress plugin, the cookie domain value is valid now for the site root.
-
 
 *15th March 2025*
 Text sanitization updates to prevent "deprecated warnings" in PHP 8.2
