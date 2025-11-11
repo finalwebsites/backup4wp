@@ -13,7 +13,7 @@ The backup tool makes a copy from your WordPress website and saves the files in 
 This tool is using the Linux command line tool "rsync" to copy all the files. We're using the tool for years and it works perfect on all our web servers. It might break your website during a restore action, so try the backup tool first on a similar test/staging site.
 
 ### Security
-The tool doesn't store any database logins and all files are saved in a directory which is not accessible via the public website. To access the Backup4WP tool, you need to authorize via a link that is send to your own email address. The session expires 4 hours of activity.
+The tool doesn't store any database logins and all files are saved in a directory which is not accessible via the public website. To access the Backup4WP tool, you need to authorize via a link that is send to your own email address. The (cookie) session expires after 4 hours of inactivity.
 
 If your web host is based on Apache, there is an option to protect the directory using a login/password or by white-listing your IP address.
 
@@ -38,23 +38,7 @@ composer create-project finalwebsites/backup4wp:dev-master mybackup
 
 Replace the directory name "mybackup" with your unique name, if you like.
 
-### Installation snippet for ManageWP users
-
-Use this snippet if you use ManageWP. Just run the code and access the tool and finish the "Installation". **Continue with the Installation as subscribed before!**
-
-    <?php
-    $dir = dirname(dirname(dirname(__DIR__))).'/mybackup';
-    if (file_exists($dir)) {
-    	echo 'A "mybackup" directory already exists!';
-    } else {
-        exec('composer -V', $output);
-        if (substr($output[0], 0, 8) == 'Composer') {
-    		exec('composer create-project finalwebsites/backup4wp:dev-master mybackup'); // you can use a different directory name (instead of "mybackup")
-            echo 'Downloaded and installed Backup4WP using Composer';
-    	} else {
-    		echo 'Composer isn\'t supported by your web host.';
-    	}
-    }
+The best and easiest way to install Backup4WP is by using the WordPress plugin. You can download the plugin via the [Backup4WP website](https://backup4wp.com/).
 
 
 ## Update notes
