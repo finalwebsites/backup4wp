@@ -4,7 +4,7 @@ You know the problem, you've created a backup for your website using a WordPress
 Using this backup tool you're able to create a backup outside WordPress. Access the tool again if you need to restore the website. We use the tool to create backups if we install a new theme / plugin or before we do some (smaller) updates.
 
 > [!TIP]
-> Now it is also possible to install AND update Backup4WP via the WordPress dashboard. [Download the plugin](https://backup4wp.com/) from our website and install the recent version of Backup4WP with a simple mouse click.
+> Now it is also possible to install AND update Backup4WP via the WordPress dashboard. [Download the WordPress plugin](https://backup4wp.com/wordpress-plugin/) from our website and install the recent version of Backup4WP with a simple mouse click.
 
 ### How does it work?
 The backup tool makes a copy from your WordPress website and saves the files in a directory outside the public directory. A database dump is saved in the same directory. During the restore function the files from the backup are moved back to the original location. The database dump is used to restore the database as well.
