@@ -14,7 +14,7 @@ define('BASE_URL', '//'.$_SERVER['HTTP_HOST'].MBDIRNAME.'/');
 
 define('ENABLE_DOWNLOADS', false); // set to "true" to enable backup downnloads
 
-define('BWP_VERSION', '1.3.4');
+define('BWP_VERSION', '1.3.5');
 
 ini_set('max_execution_time', '120');
 
@@ -26,8 +26,8 @@ use MailerSend\MailerSend;
 use MailerSend\Helpers\Builder\Recipient;
 use MailerSend\Helpers\Builder\EmailParams;
 
-include_once 'MailerooClient.php';
 use Maileroo\MailerooClient;
+use Maileroo\EmailAddress;
 
 // This should be the part of the install process
 if (!file_exists(DATAPATH.'wpbackupsDb.sqlite')) {
@@ -238,17 +238,18 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 		$result = $db->querySingle("SELECT apikey, smtpserver, smtpport, smtplogin, smtppassword, smtpsecure, emailfrom, emailtype FROM backupsettings WHERE id = 1", true);
 		$db->close();
 		$status = 'succes';
-		$message = '';
+		$message = $return_msg;
+
 		if ($result['emailtype'] == 'maileroo') {
+			$data = array();
 			try {
 				$client = new MailerooClient($result['apikey']);
-				$client->setFrom($_SERVER['HTTP_HOST'], $result['emailfrom']);
-				$client->setTo('WP Admin', $to);
-				$client->setSubject($subject);
-				$client->setHtml($msg);
-				$client->setPlain(strip_tags($msg));
-				$client->sendBasicEmail();
-				$message = $return_msg;
+				$data['from'] = new EmailAddress($result['emailfrom'], $_SERVER['HTTP_HOST']);
+				$data['to'] = new EmailAddress($to, 'WP Admin');
+				$data['subject'] = $subject;
+				$data['html'] = $msg;
+				$data['plain'] = strip_tags($msg);
+				$client->sendBasicEmail($data);
 			} catch (Exception $e) {
 				$status = 'error';
 				$message = 'Caught exception: ' . $e->getMessage() . "\n";
@@ -267,9 +268,7 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 			    ->setText(strip_tags($msg));
 			try {
 				$response = $mailersend->email->send($emailParams);
-                if ( $response['status_code'] == 202 ) {
-					$message = $return_msg;
-				} else {
+                if ( $response['status_code'] != 202 ) {
                     $status = 'error';
 					$message = 'Error, the message hasn\'t been sent.';
                 }
@@ -295,7 +294,6 @@ function sendemail( $to, $subject, $msg, $return_msg = 'Message sent successfull
 				$mail->Body = $msg;
 				$mail->AltBody = strip_tags($msg);
 				$mail->send();
-				$message = $return_msg;
 			} catch (Exception $e) {
 				$status = 'error';
 				$message = 'Message could not be sent. Mailer Error: '.$mail->ErrorInfo;
