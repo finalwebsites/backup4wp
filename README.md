@@ -98,6 +98,7 @@ We changed the options page that users can use their SMTP server credentials now
 
 ## Credits
 * [Mysqldump by Diego Torres](https://github.com/ifsnop/mysqldump-php)
+* [Maileroo PHP SDK](https://github.com/maileroo/maileroo-php-sdk)
 * [MailerSend PHP SDK](https://github.com/mailersend/mailersend-php/)
 * [PHPMailer - The classic email sending library for PHP](https://github.com/PHPMailer/PHPMailer)
 * [phpdotenv](https://github.com/vlucas/phpdotenv)
