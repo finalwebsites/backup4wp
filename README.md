@@ -1,6 +1,6 @@
 # Backup4WP
 
-You know the problem, you've created a backup for your website using a WordPress backup plugin and your WordPress website breaks after an update. Next you can't restore your website to the previous version because you can't access the WP dashboard anymore.
+You know the problem, you've created a backup for your website using a WordPress backup plugin and your WordPress website breaks after an update. With most backup plugins for WordPress, you can't restore your website to the previous version because you can't access the dashboard anymore.
 Using this backup tool you're able to create a backup outside WordPress. Access the tool again if you need to restore the website. We use the tool to create backups if we install a new theme / plugin or before we do some (smaller) updates.
 
 > [!TIP]
@@ -26,7 +26,7 @@ If your web host is based on Apache, there is an option to protect the directory
 * Exclude themes, plugins or media files
 * Restore your site even if the WordPress website doesn't work anymore
 * Delete old backups with a single click
-* Place notes with every backup
+* Place notes by every backup
 
 ## Installation
 
@@ -43,8 +43,9 @@ The best and easiest way to install Backup4WP is by using the WordPress plugin. 
 
 ## Update notes
 
-*30 December*
+*1 January 2026*
 The Maileroo PHP SDK is replaced and will be installed now via Composer. 
+The email template is replaced with a more responsive version.
 
 *9th November 2025*
 In some cases, the settings for Maileroo and Mailersend weren't saved correctly. This has now been resolved. Error messages about invalid variables during a new installation have also been removed.

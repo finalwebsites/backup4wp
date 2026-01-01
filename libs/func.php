@@ -433,7 +433,7 @@ function dirSize($directory) {
 }
 
 function email_template($info, $url) {
-	$template = file_get_contents(ABSPATH.'email-template.html');
-	$html = str_replace(array('#INFO#', '#URL#', ), array($info, $url), $template);
+	$template = file_get_contents(MYBACKUPDIR.'libs/email-template.html');
+	$html = str_replace(array('#INFO#', '#URL#'), array($info, $url), $template);
 	return $html;
 }
