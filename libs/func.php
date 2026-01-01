@@ -433,37 +433,7 @@ function dirSize($directory) {
 }
 
 function email_template($info, $url) {
-	return sprintf('
-<html>
-<head>
-<style>
-body {
-	margin:0;
-	padding:30px;
-	text-align:center;
-	font:14px Arial, sans-serif;
-	line-height:2em;
-	background-color:#efefef;
-	color:#333333;
-}
-.mailcontainer {
-	margin:20 auto;
-	padding:20px;
-	text-align:left;
-	background-color:#ffffff;
-	border:1px solid #BFBFBF
-}
-</style>
-</head>
-<body style="margin:0;padding:30px;text-align:center;font:14px Arial, sans-serif;line-height:2.0em;background-color:#efefef;">
-<div class="mailcontainer" style="margin:auto;padding:20px;text-align:left;background-color:#ffffff;border:1px solid #BFBFBF">
-<p>Hello Admin,<br>
-%s</p>
-<p><a href="%s">%s</a></p>
-<p>Kind regards,<br>
-Team Backup4WP</p>
-</div>
-</body>
-</html>
-', $info, $url, $url);
+	$template = file_get_contents(ABSPATH.'email-template.html');
+	$html = str_replace(array('#INFO#', '#URL#', ), array($info, $url), $template);
+	return $html;
 }
