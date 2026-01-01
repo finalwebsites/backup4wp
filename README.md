@@ -45,7 +45,7 @@ The best and easiest way to install Backup4WP is by using the WordPress plugin. 
 
 *1 January 2026*
 The Maileroo PHP SDK is replaced and will be installed now via Composer. 
-The email template is replaced with a more responsive version.
+With the new email template it's possible to send responsive email messages.
 
 *9th November 2025*
 In some cases, the settings for Maileroo and Mailersend weren't saved correctly. This has now been resolved. Error messages about invalid variables during a new installation have also been removed.
